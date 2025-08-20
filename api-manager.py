@@ -8,9 +8,11 @@ class RandomAPIManager():
     def __init__(self):
         super()
 
-    def request(self, amount=1, word_length=4):
+    def request_json(self, amount=1, word_length=4):
         dict_response = requests.get(f"https://random-word-api.herokuapp.com/word?number={amount}&length={word_length}")
-        words = dict_response.json() # Output is a list
+        words = dict_response.json()
+        
+        return words # Output is a list of words
 
 class MerriamAPIManager():
 
@@ -22,7 +24,7 @@ class MerriamAPIManager():
         super()
         load_dotenv()
 
-    def request(self, word):
+    def request_json(self, word):
         dict_response = requests.get(f"https://dictionaryapi.com/api/v3/references/collegiate/json/{word}?key={MerriamAPIManager.DICT_API}")
         word_name = dict_response.json()[0]["meta"]["id"].lower().strip()
         stem_set = set(map(lambda stem: stem.split(" ")[0], dict_response.json()[0]["meta"]["stems"]))
