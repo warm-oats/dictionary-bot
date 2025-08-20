@@ -2,41 +2,27 @@ import os
 import requests
 from dotenv import load_dotenv
 
-class WordAPIManager:
+# f-strings make OOP for this very hard, so using separate classes
 
-    URL = None
-
-    def __init__(self):
-        pass
-
-    def request(self):
-        dict_response = requests.get(eval(f'f"{self.URL}"')) 
-
-        return dict_response
-
-class RandomAPIManager(WordAPIManager):
-
-    URL = "https://random-word-api.herokuapp.com/word?number={amount}?length={word_length}"
-
+class RandomAPIManager():
     def __init__(self):
         super()
 
     def request(self, amount=1, word_length=4):
-        dict_response = super().request_word()
+        dict_response = requests.get(f"https://random-word-api.herokuapp.com/word?number={amount}?length={word_length}")
 
-class MerriamAPIManager(WordAPIManager):
+class MerriamAPIManager():
 
     load_dotenv()
 
     DICT_API = os.getenv('DICTIONARY_API')
-    URL = "https://dictionaryapi.com/api/v3/references/collegiate/json/{word}?key={MerriamAPIManager.DICT_API}"
 
     def __init__(self):
         super()
         load_dotenv()
 
     def request(self, word):
-        dict_response = super().request_word(word)
+        dict_response = requests.get(f"https://dictionaryapi.com/api/v3/references/collegiate/json/{word}?key={MerriamAPIManager.DICT_API}")
         word_name = dict_response.json()[0]["meta"]["id"].lower().strip()
         stem_set = set(map(lambda stem: stem.split(" ")[0], dict_response.json()[0]["meta"]["stems"]))
 
