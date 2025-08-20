@@ -1,9 +1,12 @@
-from src.api_manager import RandomAPIManager, MerriamAPIManager
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from api_manager import MerriamAPIManager, RandomAPIManager
 
 generate_random = RandomAPIManager().request_json
 generate_merriam = MerriamAPIManager().request_json
 
 if __name__ == '__main__':
-    generate_random(3, 5)
+    print(generate_random())
 
 
