@@ -2,13 +2,13 @@ from api_manager import MerriamAPIManager
 
 class Translator():
 
-    merriam_request = MerriamAPIManager().request_json
+    merriam_API = MerriamAPIManager()
 
     def __init__(self):
         pass
 
     def get_word(self, word):
-        merriam_response = self.merriam_request(word)
+        merriam_response = self.merriam_API.request_json(word)
         word_info = {}
 
         word_info["word_name"] = word
