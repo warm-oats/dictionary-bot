@@ -18,14 +18,14 @@ class MerriamAPIManager():
 
     load_dotenv()
 
-    DICT_API = os.getenv('DICTIONARY_API')
+    MERRIAM_API = os.getenv('DICTIONARY_API')
 
     def __init__(self):
         super()
         load_dotenv()
 
     def request_json(self, word):
-        dict_response = requests.get(f"https://dictionaryapi.com/api/v3/references/collegiate/json/{word}?key={MerriamAPIManager.DICT_API}")
+        dict_response = requests.get(f"https://dictionaryapi.com/api/v3/references/collegiate/json/{word}?key={MerriamAPIManager.MERRIAM_API}")
         word_name = dict_response.json()[0]["meta"]["id"].lower().strip()
         stem_set = set(map(lambda stem: stem.split(" ")[0], dict_response.json()[0]["meta"]["stems"]))
 
