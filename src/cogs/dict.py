@@ -1,5 +1,4 @@
 from discord.ext import commands
-from discord import app_commands
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
