@@ -1,4 +1,4 @@
-from api_manager import MerriamAPIManager, RandomAPIManager
+from api_manager import MerriamAPIManager
 
 class Translator():
 
@@ -9,13 +9,14 @@ class Translator():
 
     def get_word(self, word):
         merriam_response = self.merriam_request(word)
+        word_info = {}
 
-        word_name = word
-        stem_set = set(map(lambda stem: stem.split(" ")[0], merriam_response[0]["meta"]["stems"]))
-        short_def = merriam_response[0]["shortdef"] 
-        part_of_speech = merriam_response[0]["fl"]
+        word_info["word_name"] = word
+        word_info["stem_set"] = set(map(lambda stem: stem.split(" ")[0], merriam_response[0]["meta"]["stems"]))
+        word_info["definitions"] = merriam_response[0]["shortdef"] 
+        word_info["part_of_speech"] = merriam_response[0]["fl"]
 
-        print(word_name, stem_set, short_def, part_of_speech)
+        return word_info
 
 if __name__ == '__main__':
     translator = Translator()
