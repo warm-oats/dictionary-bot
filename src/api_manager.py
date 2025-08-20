@@ -30,4 +30,8 @@ class MerriamAPIManager():
         stem_set = set(map(lambda stem: stem.split(" ")[0], dict_response.json()[0]["meta"]["stems"]))
 
 if __name__ == "__main__":
-    pass
+    random = RandomAPIManager()
+    merriam = MerriamAPIManager()
+
+    random.request_json()
+    merriam.request_json('hey')
