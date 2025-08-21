@@ -2,11 +2,10 @@ from discord.ext import commands
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from service.translator import Translator
 
-class WordDictionary(commands.Cog):
+class DictController(commands.Cog):
 
-    translator = Translator()
+    
 
     def __init__(self, bot):
         self.bot = bot
@@ -19,4 +18,4 @@ class WordDictionary(commands.Cog):
 
 async def setup(bot):
     print("Inside word dictionary setup function")
-    await bot.add_cog(WordDictionary(bot))
+    await bot.add_cog(DictController(bot))
