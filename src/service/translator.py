@@ -1,8 +1,9 @@
-from api_manager import MerriamAPIManager
+from api_manager import MerriamAPIManager, PapagoAPIManager
 
 class Translator():
 
     merriam_API = MerriamAPIManager()
+    papago_API = PapagoAPIManager()
 
     def __init__(self):
         pass
@@ -17,8 +18,12 @@ class Translator():
         word_info["part_of_speech"] = merriam_response[0]["fl"]
 
         return word_info
+    
+    def translate_word(self, word):
+        return self.papago_API.translate_word(word)
 
 if __name__ == '__main__':
     translator = Translator()
 
     translator.get_word('voluminous')
+    print(translator.translate_word('hello'))

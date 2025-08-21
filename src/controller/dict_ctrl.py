@@ -2,7 +2,7 @@ from discord.ext import commands
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from translator import Translator
+from service.translator import Translator
 
 class WordDictionary(commands.Cog):
 
@@ -12,7 +12,7 @@ class WordDictionary(commands.Cog):
         self.bot = bot
 
     @commands.command(name = "defineword")
-    async def get_word_info(self, ctx, word):
+    async def define_word(self, ctx, word):
         word_info = self.translator.get_word(word)
 
         await ctx.channel.send(word_info['word_name'])
