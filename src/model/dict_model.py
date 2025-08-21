@@ -4,9 +4,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from api_manager.dict_api import DictAPIManager
 
 class DictModel():
-    
-    def __init__(self):
-        DictModel.api_manager = DictAPIManager()
+
+    api_manager = DictAPIManager()
 
     def get_word_info(self, word):
         api_response = DictModel.api_manager.request_json(word) 
@@ -17,7 +16,7 @@ class DictModel():
         word_info["definitions"] = api_response[0]["shortdef"] 
         word_info["part_of_speech"] = api_response[0]["fl"]
 
-        return word_info
+        return word_info # Always be a dict with word property key pair values
     
 if __name__ == '__main__':
     dict_model = DictModel()
