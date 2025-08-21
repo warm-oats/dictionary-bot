@@ -2,12 +2,12 @@ from discord.ext import commands
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from model.dict_model.dict_logic import DictLogic
+from model.dict_model import DictModel
 from view.dict_view import DictView
 
 class DictController(commands.Cog):
 
-    dict_model = DictLogic()
+    dict_model = DictModel()
     dict_view = DictView()
 
     def __init__(self, bot):
