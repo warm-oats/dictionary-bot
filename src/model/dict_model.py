@@ -9,22 +9,26 @@ class DictModel():
 
     def get_word_info(self, word):
         api_response = DictModel.api_manager.request_json(word)
-        word_infos = [] # List of all possible definition contexts
+        def_contexts = [] # List of all possible definition contexts
 
         for word_info in api_response:
-            word_infos.append(self.process_word_info(word_info))
+            def_contexts.append(self.process_word_info(word_info, word))
 
-        return word_infos # Always be a dict with word property key pair values
+        return list(filter(lambda def_context: def_context, def_contexts)) # Always be a list with dicts containing all definition contexts
     
-    def process_word_info(self, unprocessed_word):
+    def process_word_info(self, unprocessed_word, word_name):
         word_info = {}
 
         word_info["word_name"] = ''.join([letter for letter in unprocessed_word['meta']['id'] if letter.isalpha()])
         word_info["stem_set"] = set(map(lambda stem: stem.split(" ")[0], unprocessed_word["meta"]["stems"]))
         word_info["definitions"] = unprocessed_word["shortdef"] 
         word_info["part_of_speech"] = unprocessed_word["fl"]
-
-        return word_info
+        
+        if self.is_valid_word(word_info, word_name):
+            return word_info # Always be a dict with word property key pair values
+    
+    def is_valid_word(self, word_info, word_name):
+        return word_info["word_name"] == word_name
     
 if __name__ == '__main__':
     dict_model = DictModel()

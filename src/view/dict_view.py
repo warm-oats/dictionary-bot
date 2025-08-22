@@ -1,15 +1,17 @@
 import discord
 
 class DictView:
-    def __init__(self):
-        pass
-    
-    async def post_word_info(self, ctx, word_info):
-        embed = self.create_embed(word_info)
-        await ctx.channel.send(embed = embed)
+    async def post_word_info(self, ctx, def_contexts):
+        embeds = [] # List containing an embed for each definition context
+        contexts_count = len(def_contexts)
 
-    def create_embed(self, word_info):
-        embed = discord.Embed(title = word_info["word_name"].capitalize())
+        for count, word_info in enumerate(def_contexts, start = 1):
+            embeds.append(self.create_embed(word_info, count, contexts_count))
+
+        await ctx.channel.send(embed = embeds[1])
+ 
+    def create_embed(self, word_info, context_num, contexts_len):
+        embed = discord.Embed(title = f"{word_info["word_name"].capitalize()}   `{context_num} of {contexts_len}`")
 
         for count, definition in enumerate(word_info["definitions"], start = 1):
             embed.add_field(name = f"Definition {count}", value = definition.capitalize(), inline = False)

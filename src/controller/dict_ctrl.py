@@ -15,8 +15,8 @@ class DictController(commands.Cog):
 
     @commands.command(name = "define")
     async def async_define_word(self, ctx, word):
-        word_info = DictController.dict_model.get_word_info(word) 
-        await DictController.dict_view.post_word_info(ctx, word_info)
+        def_contexts = DictController.dict_model.get_word_info(word) 
+        await DictController.dict_view.post_word_info(ctx, def_contexts)
 
 async def setup(bot):
     print("Inside dict controller setup function")
