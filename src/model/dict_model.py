@@ -20,7 +20,7 @@ class DictModel():
         word_info = {}
 
         word_info["word_name"] = ''.join([letter for letter in unprocessed_word['meta']['id'] if letter.isalpha()])
-        word_info["stem_set"] = set(map(lambda stem: stem.split(" ")[0], unprocessed_word["meta"]["stems"]))
+        word_info["stem_set"] = set(filter(lambda stem: len(stem) == 1, unprocessed_word["meta"]["stems"]))
         word_info["definitions"] = unprocessed_word["shortdef"] 
         word_info["part_of_speech"] = unprocessed_word["fl"]
         
@@ -33,4 +33,4 @@ class DictModel():
 if __name__ == '__main__':
     dict_model = DictModel()
 
-    print(dict_model.get_word_info('what'))
+    print(dict_model.get_word_info('fish'))
