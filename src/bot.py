@@ -3,6 +3,6 @@ import os
 
 class Bot(commands.Bot):
     async def setup_hook(self) -> None:
-        for f in os.listdir("./cogs"):
+        for f in os.listdir("./controller"):
 	        if f.endswith(".py"):
-		        await self.load_extension("cogs." + f[:-3])
+		        await self.load_extension("controller." + f[:-3])

@@ -14,9 +14,9 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 # Runs as soon as script is run, setup once
 @bot.event
 async def setup_hook():
-    for filename in os.listdir("src/cogs"):
+    for filename in os.listdir("src/controller"):
         if filename.endswith(".py"):
-            await bot.load_extension(f"cogs.{filename[:-3]}")
+            await bot.load_extension(f"controller.{filename[:-3]}")
     
     synced = await bot.tree.sync()
     print(f"Synced {len(synced)} commands(s)")

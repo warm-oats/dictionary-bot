@@ -2,13 +2,13 @@ import asyncio
 from googletrans import Translator as GoogleTranslator
 
 class TranslatorAPIManager():
-    def __init__(self):
-        TranslatorAPIManager.translator = GoogleTranslator()
+
+    translator = GoogleTranslator()
 
     def translate_word(self, word, src='en', dest='ko'):
         async def sync_translate():
-            async with self.translator:
-                return await self.translator.translate(word, src=src, dest=dest)
+            async with TranslatorAPIManager.translator:
+                return await TranslatorAPIManager.translator.translate(word, src=src, dest=dest)
 
         return asyncio.run(sync_translate())
     
