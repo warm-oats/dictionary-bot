@@ -1,6 +1,10 @@
 import discord
 
-class DictView(discord.ui.View):
+class DictView:
+
+    def __init__(self):
+        super().__init__()
+        self.value = None
 
     async def post_word_info(self, ctx, def_contexts):
         embeds = [] # List containing an embed for each definition context
@@ -9,7 +13,12 @@ class DictView(discord.ui.View):
         for count, word_info in enumerate(def_contexts, start=1):
             embeds.append(self.create_embed(word_info, count, contexts_count))
 
-        await ctx.channel.send(embed = embeds[0])
+        await ctx.channel.send(embed=embeds[0], view=ButtonView())
+        await ButtonView().wait()
+
+    @discord.ui.button(label=">", style = discord.ButtonStyle.blurple)
+    async def next_button(self, interaction, button):
+        pass
  
     def create_embed(self, word_info, context_num, contexts_count):
         embed = discord.Embed(title = f"{word_info["word_name"].capitalize()}   `{context_num} of {contexts_count}`")
@@ -24,12 +33,12 @@ class DictView(discord.ui.View):
 
         return embed
 
-class DictButton(discord.ui.View):
-    
+class ButtonView(discord.ui.View):
     def __init__(self):
         super().__init__()
         self.value = None
 
     @discord.ui.button(label=">", style=discord.ButtonStyle.blurple)
-    async def menu(self, button: discord.ui.button, interaction: discord.Interaction, next_embed: discord.Embed):
-        embed = next_embed
+    async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message('CLICKED!')
+        button.disabled = True
