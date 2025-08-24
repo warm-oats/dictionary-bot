@@ -17,7 +17,7 @@ class DictView(discord.ui.View):
         for count, definition in enumerate(word_info["definitions"], start = 1):
             embed.add_field(name = f"Definition {count}", value = definition.capitalize(), inline = False)
 
-        embed.add_field(name = "Stem Set", value =  " ".join(word_info["stem_set"]).capitalize(), inline = False)
+        embed.add_field(name = "Stem Set", value =  " ".join(word_info["stem_set"]), inline = False)
         embed.add_field(name = "Part of Speech", value = word_info["part_of_speech"].capitalize(), inline = False)
 
         embed.footer
@@ -33,4 +33,3 @@ class DictButton(discord.ui.View):
     @discord.ui.button(label=">", style=discord.ButtonStyle.blurple)
     async def menu(self, button: discord.ui.button, interaction: discord.Interaction, next_embed: discord.Embed):
         embed = next_embed
-        
