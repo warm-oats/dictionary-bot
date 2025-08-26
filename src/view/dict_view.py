@@ -15,6 +15,9 @@ class DictView:
 
         await ctx.channel.send(embed = embeds[0], view = button_controller)
         await button_controller.wait()
+
+    async def edit_word_info(self, interaction, new_embed):
+        await interaction.response.edit_message(embed = new_embed)
  
     def create_embed(self, word_info, context_num, contexts_count):
         embed = discord.Embed(title = f"{word_info["word_name"].capitalize()}   `{context_num} of {contexts_count}`")
