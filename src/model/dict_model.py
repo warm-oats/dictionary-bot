@@ -18,13 +18,13 @@ class DictModel():
     
     def process_word_info(self, unprocessed_word, word_name):
         word_info = {}
-
         word_info["word_name"] = ''.join([letter for letter in unprocessed_word['meta']['id'] if letter.isalpha()])
-        word_info["stem_set"] = set(map(lambda stem: stem.lower(), filter(lambda stem: len(stem.split(" ")) == 1, unprocessed_word["meta"]["stems"])))
-        word_info["definitions"] = unprocessed_word["shortdef"] 
-        word_info["part_of_speech"] = unprocessed_word["fl"]
-        
+
         if self.is_valid_word(word_info, word_name):
+            word_info["stem_set"] = set(map(lambda stem: stem.lower(), filter(lambda stem: len(stem.split(" ")) == 1, unprocessed_word["meta"]["stems"])))
+            word_info["definitions"] = unprocessed_word["shortdef"] 
+            word_info["part_of_speech"] = unprocessed_word["fl"]
+                
             return word_info # Always be a dict with word property key pair values
     
     def is_valid_word(self, word_info, word_name):
@@ -33,4 +33,4 @@ class DictModel():
 if __name__ == '__main__':
     dict_model = DictModel()
 
-    print(dict_model.get_word_info('fish'))
+    print(dict_model.get_word_info('agonize'))
