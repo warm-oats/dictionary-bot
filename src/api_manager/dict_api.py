@@ -14,4 +14,4 @@ class DictAPIManager():
         return response.json()
     
 if __name__ == '__main__':
-    print(DictAPIManager().request_json('agony'))
+    print(DictAPIManager().request_json('what'))

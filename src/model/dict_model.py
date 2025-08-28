@@ -24,6 +24,7 @@ class DictModel():
             word_info["stem_set"] = set(map(lambda stem: stem.lower(), filter(lambda stem: len(stem.split(" ")) == 1, unprocessed_word["meta"]["stems"])))
             word_info["definitions"] = unprocessed_word["shortdef"] 
             word_info["part_of_speech"] = unprocessed_word["fl"]
+            word_info["phonetics"] = list(filter(lambda info: info, [prs_info.get("mw", None) for prs_info in unprocessed_word["hwi"].get("prs", [])]))
                 
             return word_info # Always be a dict with word property key pair values
     
@@ -33,4 +34,4 @@ class DictModel():
 if __name__ == '__main__':
     dict_model = DictModel()
 
-    print(dict_model.get_word_info('agonize'))
+    print(dict_model.get_word_info('what'))

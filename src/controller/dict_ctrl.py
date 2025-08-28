@@ -49,6 +49,7 @@ class ButtonController(discord.ui.View):
             self.cur_context_num += 1
             await self.dict_controller.dict_view.edit_word_info(def_context, self.cur_context_num, contexts_len, interaction)
             self.def_context_i += 1
+            self.disabled = True
 
     def is_valid_index(self, index, lst_len):
         if index < 0 or index >= lst_len:
