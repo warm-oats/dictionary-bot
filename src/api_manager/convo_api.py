@@ -12,7 +12,7 @@ client = Groq(api_key = config('GROQ_API'))
 # Model for conversations
 class Conversation(BaseModel):
     text: str
-    comments: Optional[str] = None
+    translation: Optional[str] = None
 
 
 # Generate convo text using the Groq API
@@ -23,18 +23,15 @@ def groq_translate(query):
             {
                 "role": "system",
                 "content": f"You are a helpful Korean language teacher."
-                           f"Do not use phonetic spelling or romanization of Korean. Only use authentic Hangul."
                            f"Only use beginner level conversations, keep replies short and simple, and not too wordy."
                            f"Don't attach any phonetic or romanized Korean spelling or pronunciation on the side when replying."
-                           f"Maintain the conversation and keep it going naturally unless directed otherwise by the user."
                            f"Minimize talking in English unless directed otherwise."
-                           f"If no conversations have been started, suggest a conversation with a common Korean topic."
                            f"You will only reply in the form of JSON."
-                           f"When having a conversation, the JSON object must use the schema: {json.dumps(Conversation.model_json_schema(), indent=2)}. For text field, put the Hangul. For comments field, put the English translation of the Hangul."
+                           f"When having a conversation, the JSON object must use the schema: {json.dumps(Conversation.model_json_schema(), indent=2)}. For text field, put the Hangul. For translation field, put the English translation of the Hangul."
             },
             {
                 "role": "user",
-                "content": f"{query}"
+                "content": f"Start a conversation with the word {query}. The context is buying fish in the store."
             }
         ],
         model="openai/gpt-oss-20b",
@@ -48,4 +45,4 @@ def groq_translate(query):
     print(review.model_dump())
 
 if __name__ == "__main__":
-    groq_translate('Start a conversation using the word "fish"')
+    groq_translate('Fish')
