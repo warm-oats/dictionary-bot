@@ -14,35 +14,37 @@ class Conversation(BaseModel):
     text: str
     translation: Optional[str] = None
 
+class ConvoAPIManager():
 
-# Generate convo text using the Groq API
-def groq_translate(query):
-    # Create a chat completion
-    chat_completion = client.chat.completions.create(
-        messages=[
-            {
-                "role": "system",
-                "content": f"You are a helpful Korean language teacher."
-                           f"Only use beginner level conversations, keep replies short and simple, and not too wordy."
-                           f"Don't attach any phonetic or romanized Korean spelling or pronunciation on the side when replying."
-                           f"Minimize talking in English unless directed otherwise."
-                           f"You will only reply in the form of JSON."
-                           f"When having a conversation, the JSON object must use the schema: {json.dumps(Conversation.model_json_schema(), indent=2)}. For text field, put the Hangul. For translation field, put the English translation of the Hangul."
-            },
-            {
-                "role": "user",
-                "content": f"Start a conversation with the word {query}. The context is buying fish in the store."
-            }
-        ],
-        model="openai/gpt-oss-20b",
-        temperature=0.2,
-        max_tokens=1024,
-        stream=False,
-        response_format={"type": "json_object"},
-    )
+    # Generate convo text using the Groq API
+    def groq_translate(query):
+        # Create a chat completion
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": f"You are a helpful Korean language teacher."
+                            f"Only use beginner level conversations, keep replies short and simple, and not too wordy."
+                            f"Don't attach any phonetic or romanized Korean spelling or pronunciation on the side when replying."
+                            f"Minimize talking in English unless directed otherwise."
+                            f"You will only reply in the form of JSON."
+                            f"When having a conversation, the JSON object must use the schema: {json.dumps(Conversation.model_json_schema(), indent=2)}. For text field, put the Hangul. For translation field, put the English translation of the Hangul."
+                },
+                {
+                    "role": "user",
+                    "content": f"Start a conversation with the word {query}. The context is buying fish in the store."
+                }
+            ],
+            model="openai/gpt-oss-20b",
+            temperature=0.2,
+            max_tokens=1024,
+            stream=False,
+            response_format={"type": "json_object"},
+        )
 
-    review = Conversation.model_validate(json.loads(chat_completion.choices[0].message.content))
-    print(review.model_dump())
+        response = Conversation.model_validate(json.loads(chat_completion.choices[0].message.content)).model_dump()
+
+        return response
 
 if __name__ == "__main__":
     groq_translate('Fish')
