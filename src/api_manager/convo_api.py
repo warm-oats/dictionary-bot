@@ -13,6 +13,8 @@ client = Groq(api_key = config('GROQ_API'))
 class Conversation(BaseModel):
     text: str
     translation: str
+    verb_vocabularies: list[dict]
+    noun_vocabularies: list[dict]
 
 class ConvoAPIManager():
     # Generate convo text using the Groq API
@@ -23,13 +25,19 @@ class ConvoAPIManager():
                 "role": "system",
                 "content": 
                         f"You are a helpful Korean language teacher."
-                        f"Only use beginner level conversations, keep replies short and simple, and not too wordy."
+                        f"Only use beginner level conversations."
+                        f"Keep replies simple. Maximum 2 sentences and no more than 50 words."
                         f"Don't attach any phonetic or romanized Korean spelling or pronunciation on the side when replying."
                         f"Minimize talking in English unless directed otherwise."
+                        f"You will play your role and given context."
                         f"Use complete sentences."
                         f"Correct any grammatical or spelling errors."
                         f"You will only reply in the form of JSON."
-                        f"When having a conversation, the JSON object must use the schema: {json.dumps(Conversation.model_json_schema(), indent=2)}. For text field, put the Hangul. For translation field, put the English translation of the Hangul."
+                        f"""When having a conversation, the JSON object must use the schema: {json.dumps(Conversation.model_json_schema(), indent=2)}. 
+                        For text field, put the Hangul. 
+                        For translation field, put the English translation of the Hangul.
+                        For the verb_vocabulary field, put all Korean verbs in the list as key pair values of key as the Korean verb in its base form and value as translation of that vocabulary.
+                        For the noun_vocabulary field, put all Korean nouns in the list as key pair values of key as the Korean verb in its base form and value as translation of that vocabulary."""
             }
         ]
 
