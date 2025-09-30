@@ -2,9 +2,14 @@ from discord.ext import commands
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from api_manager.convo_api import ConvoAPIManager
+from model.convo_model import ConvoModel
+from view.convo_view import ConvoView
 
 class ConvoController(commands.Cog):
+
+    convo_model = ConvoModel()
+    convo_view = ConvoView()
+
     def __init__(self, bot):
         self.bot = bot
 
