@@ -14,4 +14,4 @@ class TranslatorAPIManager():
     
 if __name__ == '__main__':
     translator = TranslatorAPIManager()
-    translator.translate_word('hey')
+    print(translator.translate_word('hey'))
