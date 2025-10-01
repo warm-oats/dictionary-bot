@@ -15,10 +15,8 @@ class POSTagAPIManager():
             if (word_tup[POS_i] in pos_map):
                 pos_map[word_tup[POS_i]] = word_tup[WORD_i]
 
-        print(pos_map)
+        return pos_map
     
 if __name__ == '__main__':
 
-    mecab = POSTagAPIManager()
-
-    print(mecab.extract_pos("달은 정말 아름답습니다"))
+    okt = POSTagAPIManager()
