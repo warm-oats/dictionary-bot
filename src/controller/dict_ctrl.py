@@ -8,17 +8,16 @@ from view.dict_view import DictView
 
 class DictController(commands.Cog):
 
-    dict_model = DictModel()
-    dict_view = DictView()
-
     def __init__(self, bot):
+        self.dict_model = DictModel()
+        self.dict_view = DictView()
         self.bot = bot
 
     @commands.command(name = "define")
     async def async_define_word(self, ctx, word):
-        self.def_contexts = DictController.dict_model.get_word_info(word) 
+        self.def_contexts = self.dict_model.get_word_info(word) 
         button_controller = ButtonController(self)
-        await DictController.dict_view.post_word_info(ctx, self.def_contexts, button_controller)
+        await self.dict_view.post_word_info(ctx, self.def_contexts, button_controller)
 
 class ButtonController(discord.ui.View):
     def __init__(self, dict_controller):

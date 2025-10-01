@@ -7,11 +7,10 @@ from view.convo_view import ConvoView
 
 class ConvoController(commands.Cog):
 
-    convo_model = ConvoModel()
-    convo_view = ConvoView()
-
     def __init__(self, bot):
         self.bot = bot
+        self.convo_model = ConvoModel("Korean")
+        self.convo_view = ConvoView()
 
 async def setup(bot):
     print("Inside dict controller setup function")
