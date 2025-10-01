@@ -7,7 +7,7 @@ class DictView:
         self.value = None
         self.phonetics = []
 
-    async def post_word_info(self, ctx, def_contexts, button_controller):
+    async def post_word_info(self, ctx, def_contexts, button_view):
         embeds = [] # List containing an embed for each definition context
         contexts_count = len(def_contexts)
 
@@ -16,8 +16,8 @@ class DictView:
         for count, word_info in enumerate(def_contexts, start=1):
             embeds.append(self.create_embed(word_info, count, contexts_count))
 
-        await ctx.channel.send(embed = embeds[0], view = button_controller)
-        await button_controller.wait()
+        await ctx.channel.send(embed = embeds[0], view = button_view)
+        await button_view.wait()
 
     async def edit_word_info(self, def_context, context_num, contexts_count, interaction):
         embed = self.create_embed(def_context, context_num, contexts_count)
