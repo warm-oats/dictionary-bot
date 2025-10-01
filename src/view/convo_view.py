@@ -1,3 +1,4 @@
+import discord
 
-class ConvoView():
+class ConvoView:
     pass

@@ -12,7 +12,7 @@ class Conversation(BaseModel):
     noun_vocabulary: list[dict[str, str]]
     adjective_vocabulary: list[dict[str, str]]
 
-class ConvoModel():
+class ConvoModel:
 
     def __init__(self, language):
         self.api_manager = ConvoApiManager()

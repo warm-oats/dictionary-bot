@@ -1,7 +1,7 @@
 import asyncio
 from googletrans import Translator as GoogleTranslator
 
-class TranslatorApiManager():
+class TranslatorApiManager:
 
     translator = GoogleTranslator()
 

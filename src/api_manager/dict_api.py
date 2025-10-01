@@ -2,7 +2,7 @@ import os
 import requests
 from dotenv import load_dotenv
 
-class DictApiManager():
+class DictApiManager:
 
     load_dotenv()
     

@@ -15,40 +15,46 @@ class DictController(commands.Cog):
 
     @commands.command(name = "define")
     async def async_define_word(self, ctx, word):
-        self.def_contexts = self.dict_model.get_word_info(word) 
-        button_controller = ButtonController(self)
-        await self.dict_view.post_word_info(ctx, self.def_contexts, button_controller)
+        def_contexts = self.dict_model.get_word_info(word) 
+        button_controller = DictButtonController(def_contexts, self.dict_view.edit_word_info)
 
-class ButtonController(discord.ui.View):
-    def __init__(self, dict_controller):
+        await self.dict_view.post_word_info(ctx, def_contexts, button_controller)
+
+class DictButtonController(discord.ui.View):
+
+    def __init__(self, contexts, edit_func, context_i = 0, context_num = 1):
         super().__init__()
-        self.value = None
-        self.dict_controller = dict_controller
-        self.def_context_i = 0
-        self.cur_context_num = 1
+        self.view = discord.ui.View()
+        self.contexts = contexts
+        self.edit_func = edit_func
+        self.context_i = context_i
+        self.context_num = context_num
 
     @discord.ui.button(label="<<", style = discord.ButtonStyle.blurple)
     async def prev_button(self, interaction: discord.Interaction, button: discord.ui.Button):
 
-        contexts_len = len(self.dict_controller.def_contexts)
+        contexts_len = len(self.contexts)
 
-        if self.is_valid_index(self.def_context_i - 1, contexts_len):
-            def_context = self.dict_controller.def_contexts[self.def_context_i - 1]
-            self.cur_context_num -= 1
-            await self.dict_controller.dict_view.edit_word_info(def_context, self.cur_context_num, contexts_len, interaction)
-            self.def_context_i -= 1
+        if self.is_valid_index(self.context_i - 1, contexts_len):
+            context = self.contexts[self.context_i - 1]
+            self.context_num -= 1
+
+            await self.edit_func(context, self.context_num, contexts_len, interaction)
+
+            self.context_i -= 1
 
     @discord.ui.button(label=">>", style = discord.ButtonStyle.blurple)
     async def next_button(self, interaction: discord.Interaction, button: discord.ui.Button):
 
-        contexts_len = len(self.dict_controller.def_contexts)
+        contexts_len = len(self.contexts)
 
-        if self.is_valid_index(self.def_context_i + 1, contexts_len):
-            def_context = self.dict_controller.def_contexts[self.def_context_i + 1]
-            self.cur_context_num += 1
-            await self.dict_controller.dict_view.edit_word_info(def_context, self.cur_context_num, contexts_len, interaction)
-            self.def_context_i += 1
-            self.disabled = True
+        if self.is_valid_index(self.context_i + 1, contexts_len):
+            context = self.contexts[self.context_i + 1]
+            self.context_num += 1
+
+            await self.edit_func(context, self.context_num, contexts_len, interaction)
+
+            self.context_i += 1
 
     def is_valid_index(self, index, lst_len):
         if index < 0 or index >= lst_len:
