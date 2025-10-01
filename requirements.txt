@@ -55,12 +55,15 @@ idna==3.10
 incremental==22.10.0
 Jinja2==3.1.2
 jiter==0.11.0
+jpype1==1.6.0
 jsonpatch==1.32
 jsonpointer==2.0
 jsonschema==4.10.3
+konlpy==0.6.0
 launchpadlib==1.11.0
 lazr.restfulclient==0.14.6
 lazr.uri==1.0.6
+lxml==6.0.2
 markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 mdurl==0.1.2

@@ -2,38 +2,39 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from api_manager.convo_api import ConvoAPIManager
-from pydantic import BaseModel
 import json
+from pydantic import BaseModel
 
 class Conversation(BaseModel):
     text: str
     translation: str
-    verb_vocabularies: list[dict]
-    noun_vocabularies: list[dict]
+    verb_vocabulary: list[dict[str, str]]
+    noun_vocabulary: list[dict[str, str]]
+    adjective_vocabulary: list[dict[str, str]]
 
 class ConvoModel():
 
-    def __init__(self):
+    def __init__(self, language):
         self.api_manager = ConvoAPIManager()
         self.client = self.api_manager.client
         self.conversation = [
             {
                 "role": "system",
                 "content": 
-                        f"You are a helpful Korean language teacher."
+                        f"You are a helpful {language} language teacher."
                         f"Only use beginner level conversations."
-                        f"Keep replies simple. Maximum 2 sentences and no more than 50 words."
-                        f"Don't attach any phonetic or romanized Korean spelling or pronunciation on the side when replying."
+                        f"Keep replies simple. Maximum 2 sentences and no more than 35 words."
+                        f"Don't attach any phonetic or romanized spelling or pronunciation on the side when replying."
                         f"Minimize talking in English unless directed otherwise."
-                        f"You will play your role and given context."
-                        f"Use complete sentences."
+                        f"Use complete sentences with correct grammar."
                         f"Correct any grammatical or spelling errors."
                         f"You will only reply in the form of JSON."
                         f"""When having a conversation, the JSON object must use the schema: {json.dumps(Conversation.model_json_schema(), indent=2)}. 
-                        For text field, put the Hangul. 
-                        For translation field, put the English translation of the Hangul.
-                        For the verb_vocabulary field, put all Korean verbs in the list as key pair values of key as the Korean verb in its base form and value as translation of that vocabulary.
-                        For the noun_vocabulary field, put all Korean nouns in the list as key pair values of key as the Korean verb in its base form and value as translation of that vocabulary."""
+                        For text field, put the sentence. 
+                        For translation field, put the English translation of the text.
+                        For the verb_vocabulary field, extract all verbs from the text, put it in base form followed by its English translation as key pair values.
+                        For the noun_vocabulary field, extract all nouns from the text, put it in its base form followed by its English translation as key pair values.
+                        For the adjective_vocabulary field, extract all adjectives from the text, put it in its base form followed by its English translation as key pair values."""
             }
         ]
 
@@ -41,9 +42,9 @@ class ConvoModel():
         
         conversation = self.client.chat.completions.create(
             messages = message,
-            model="openai/gpt-oss-20b",
+            model="openai/gpt-oss-120b",
             temperature=0.2,
-            max_tokens=1024,
+            max_tokens=1500,
             stream=False,
             response_format={"type": "json_object"},
         )
@@ -86,7 +87,7 @@ class ConvoModel():
         return bot_msg_dict
     
 if __name__ == "__main__":
-    conversationalist = ConvoModel()
+    conversationalist = ConvoModel("Korean")
 
     while True:
         user_msg = input("Enter: ")
