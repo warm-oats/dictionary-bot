@@ -1,7 +1,7 @@
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from api_manager.convo_api import ConvoAPIManager
+from api_manager.convo_api import ConvoApiManager
 import json
 from pydantic import BaseModel
 
@@ -15,7 +15,7 @@ class Conversation(BaseModel):
 class ConvoModel():
 
     def __init__(self, language):
-        self.api_manager = ConvoAPIManager()
+        self.api_manager = ConvoApiManager()
         self.client = self.api_manager.client
         self.conversation = [
             {

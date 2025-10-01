@@ -1,6 +1,6 @@
 from konlpy.tag import Okt
 
-class POSTagAPIManager():
+class PosTagApiManager():
 
     def extract_pos(self, phrase):
         okt = Okt()
@@ -19,4 +19,4 @@ class POSTagAPIManager():
     
 if __name__ == '__main__':
 
-    okt = POSTagAPIManager()
+    okt = PosTagApiManager()
