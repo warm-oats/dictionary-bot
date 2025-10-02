@@ -9,7 +9,7 @@ class CustomButton(discord.ui.Button):
 
     async def callback(self, interaction):
 
-        self.callback_params['interaction'] = interaction
+        self.callback_params['interaction'] = interaction # All callback functions need interaction argument
 
         return await self.callback_func(**self.process_params(self.callback_params))
     
@@ -33,35 +33,34 @@ class ButtonView(discord.ui.View):
         self.edit_func = edit_func
         self.context_i = context_i
         self.context_num = context_num
-        self.test_button = CustomButton(callback_func=self.next_button, label="Test", style=discord.ButtonStyle.blurple)
+        
+        self.next_button = CustomButton(
+            callback_func = self.directional_button, 
+            label = ">>", 
+            style = discord.ButtonStyle.blurple,
+            direction = 1
+            )
+        self.prev_button = CustomButton(
+            callback_func = self.directional_button, 
+            label = "<<", 
+            style = discord.ButtonStyle.blurple,
+            direction = -1
+            )
 
-        self.add_item(item = self.test_button)
+        self.add_item(item = self.prev_button)
+        self.add_item(item = self.next_button)
 
-    async def prev_button(self, interaction: discord.Interaction):
+    async def directional_button(self, interaction: discord.Interaction, direction: int):
 
         contexts_len = len(self.contexts)
 
-        if self.is_valid_index(self.context_i - 1, contexts_len):
-            context = self.contexts[self.context_i - 1]
-            self.context_num -= 1
+        if self.is_valid_index(self.context_i + direction, contexts_len):
+            context = self.contexts[self.context_i + direction]
+            self.context_num += direction
 
             await self.edit_func(context, self.context_num, contexts_len, interaction)
 
-            self.context_i -= 1
-
-    async def next_button(self, interaction: discord.Interaction, j, i):
-
-        contexts_len = len(self.contexts)
-
-        print(j + i)
-
-        if self.is_valid_index(self.context_i + 1, contexts_len):
-            context = self.contexts[self.context_i + 1]
-            self.context_num += 1
-
-            await self.edit_func(context, self.context_num, contexts_len, interaction)
-
-            self.context_i += 1
+            self.context_i += direction
 
     def is_valid_index(self, index, lst_len):
         if index < 0 or index >= lst_len:
