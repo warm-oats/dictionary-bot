@@ -11,7 +11,19 @@ class CustomButton(discord.ui.Button):
 
         self.callback_params['interaction'] = interaction
 
-        return await self.callback_func(**self.callback_params)
+        return await self.callback_func(**self.process_params(self.callback_params))
+    
+    def process_params(self, params):
+
+        result = {}
+        
+        for key, value in params.items():
+            if isinstance(value, dict):
+                result.update(value)
+            else:
+                result[key] = value
+
+        return result
 
 class ButtonView(discord.ui.View):
 
@@ -21,7 +33,7 @@ class ButtonView(discord.ui.View):
         self.edit_func = edit_func
         self.context_i = context_i
         self.context_num = context_num
-        self.test_button = CustomButton(callback_func=self.next_button, label="Test", style=discord.ButtonStyle.blurple, callback_params={'j': 5, 'i': 6})
+        self.test_button = CustomButton(callback_func=self.next_button, label="Test", style=discord.ButtonStyle.blurple)
 
         self.add_item(item = self.test_button)
 
