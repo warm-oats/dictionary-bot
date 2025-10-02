@@ -1,2 +1,2 @@
-class DictModel:
+class TranslatorModel:
     pass

@@ -8,9 +8,6 @@ from pydantic import BaseModel
 class Conversation(BaseModel):
     text: str
     translation: str
-    verb_vocabulary: list[dict[str, str]]
-    noun_vocabulary: list[dict[str, str]]
-    adjective_vocabulary: list[dict[str, str]]
 
 class ConvoModel:
 
@@ -75,7 +72,7 @@ class ConvoModel:
         
         bot_msg_dict = {
             "role": "system",
-            "content": f"bot_msg"
+            "content": f"{bot_msg}"
         }
 
         self.conversation.append(bot_msg_dict)
