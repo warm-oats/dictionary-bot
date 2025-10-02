@@ -13,6 +13,6 @@ class ConvoController(commands.Cog):
         self.convo_view = ConvoView()
 
 async def setup(bot):
-    print("Inside dict controller setup function")
+    print("Inside convo controller setup function")
     await bot.add_cog(ConvoController(bot))
 
