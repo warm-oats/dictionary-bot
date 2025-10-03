@@ -4,7 +4,6 @@ class DictView:
 
     def __init__(self):
         super().__init__()
-        self.value = None
         self.phonetics = []
 
     async def post_word_info(self, ctx, def_contexts, button_view):
@@ -33,8 +32,6 @@ class DictView:
 
         embed.add_field(name = "Stem Set", value =  " ".join(word_info["stem_set"]), inline = False)
         embed.add_field(name = "Part of Speech", value = word_info["part_of_speech"].capitalize(), inline = False)
-
-        embed.footer
 
         return embed
     

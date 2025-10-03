@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from util.custom_button import CustomButton
 
-class ButtonView(discord.ui.View):
+class DirectionalButtonView(discord.ui.View):
 
     def __init__(self, contexts, edit_func, context_i = 0, context_num = 1):
         super().__init__()

@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from model.dict_model import DictModel
 from view.dict_view import DictView
-from view.button_view import ButtonView
+from view.button_view import DirectionalButtonView
 
 class DictController(commands.Cog):
 
@@ -14,9 +14,9 @@ class DictController(commands.Cog):
         self.bot = bot
 
     @commands.command(name = "define")
-    async def async_define_word(self, ctx, word):
+    async def async_define_word(self, ctx, *, word):
         def_contexts = self.dict_model.get_word_info(word) 
-        button_view = ButtonView(def_contexts, self.dict_view.edit_word_info)
+        button_view = DirectionalButtonView(def_contexts, self.dict_view.edit_word_info)
 
         await self.dict_view.post_word_info(ctx, def_contexts, button_view)
 
