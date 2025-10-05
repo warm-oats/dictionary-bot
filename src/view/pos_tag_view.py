@@ -11,11 +11,13 @@ class PosTagView:
 
         for pos, meaning_map in pos_meaning_map.items():
             single_pos_map = {pos: meaning_map}
-            embed = self.create_embed(single_pos_map, pos, False)
 
-            embeds.append(embed)
+            if (single_pos_map[pos] != []): # If pos meaning map not empty
+                embed = self.create_embed(single_pos_map, pos, False)
 
-        await ctx.channel.send(content = f"**{phrase}**", embeds = embeds)
+                embeds.append(embed)
+
+        await ctx.channel.send(content = phrase, embeds = embeds) # Send embed to discord
 
     def create_embed(self, pos_meaning_map, phrase, put_pos_title = True):
         embed = discord.Embed(title = f"{phrase}")
@@ -27,7 +29,7 @@ class PosTagView:
                 for word_map in words_map:
                     formatted_words += self.word_formatter(word_map)
 
-                if (put_pos_title):
+                if (put_pos_title): # If creating a single embed for all pos, attach all pos names, else not
                     embed.add_field(name = f"**{pos.capitalize()}**", value = formatted_words, inline = False)
                 else:
                     embed.add_field(name = "", value = formatted_words, inline = False)

@@ -8,13 +8,14 @@ from pydantic import BaseModel
 class Conversation(BaseModel):
     text: str
     translation: str
+    nouns: list[dict[str, str]]
+    verbs: list[dict[str, str]]
+    adjectives: list[dict[str, str]]
 
 class ConvoModel:
 
     def __init__(self, language):
-        self.api_manager = ConvoApiManager()
-        self.client = self.api_manager.client
-        self.conversation = [
+        store = '''[
             {
                 "role": "system",
                 "content": 
@@ -28,6 +29,25 @@ class ConvoModel:
                         f"""When having a conversation, the JSON object must use the schema: {json.dumps(Conversation.model_json_schema(), indent=2)}. 
                         For text field, put the sentence. 
                         For translation field, put the English translation of the text."""
+            }
+        ]'''
+        self.api_manager = ConvoApiManager()
+        self.client = self.api_manager.client
+        self.conversation = [
+            {
+                "role": "system",
+                "content": 
+                        f"You are a helpful {language} language translator."
+                        f"You will be given a Korean sentence and 3 part of speech lists containing Korean nouns, verbs, and adjectives each respectively."
+                        f"Your role is to translate that sentence and each word in the parts of speech lists appearing in the Korean sentence in that context."
+                        f"You will only reply in the form of JSON."
+                        f"""When having a conversation, the JSON object must use the schema: {json.dumps(Conversation.model_json_schema(), indent=2)}. 
+                        For text field, put the sentence. 
+                        For translation field, put the English translation of the text.
+                        For the nouns field, put dictionary key value pairs where key is the original Korean noun in the Korean nouns list and value is the translated meaning in its context.
+                        For the verbs field, put dictionary key value pairs where key is the original Korean verb in the Korean nouns list and value is the translated meaning in its context.
+                        For the adjectives field, put dictionary key value pairs where key is the original Korean adjective in the Korean nouns list and value is the translated meaning in its context.
+                        """
             }
         ]
 
@@ -82,9 +102,15 @@ class ConvoModel:
 if __name__ == "__main__":
     conversationalist = ConvoModel("Korean")
 
-    while True:
-        user_msg = input("Enter: ")
+    user_msg = """
+    sentence: 곶감이 뭐지? 크고 무서운 게 분명해.’
+    nouns: [곶감, 뭐, 게]
+    verbs: [크다]
+    adjectives: [무섭다, 분명하다]
+    """
 
-        response = conversationalist.send_message(user_msg)
+    conversationalist = ConvoModel("Korean")
 
-        print(response)
+    response = conversationalist.send_message(user_msg)
+
+    print(response)
