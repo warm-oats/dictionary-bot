@@ -1,5 +1,7 @@
 import asyncio
 from googletrans import Translator as GoogleTranslator
+import nest_asyncio
+nest_asyncio.apply()
 
 class TranslatorModel:
 

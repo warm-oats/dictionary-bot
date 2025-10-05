@@ -13,11 +13,14 @@ class PosTagController(commands.Cog):
         self.pos_tag_model = PosTagModel()
         self.pos_tag_view = PosTagView()
 
+        pass
+
     @commands.command(name = "extract-pos")
     async def async_define_word(self, ctx, *, phrase):
         pos_tag_map = self.pos_tag_model.extract_pos(phrase)
+        pos_meaning_map = self.pos_tag_model.map_pos_meaning(pos_tag_map)
 
-        await self.pos_tag_view.post_tag_info(ctx, pos_tag_map, phrase)
+        await self.pos_tag_view.post_tag_info(ctx, phrase, pos_meaning_map)
 
 async def setup(bot):
     print("Inside pos tag controller setup function")
