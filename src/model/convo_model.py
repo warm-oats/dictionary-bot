@@ -1,16 +1,9 @@
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from api_manager.convo_api import ConvoApiManager
+from api_manager.groq_api import GroqApi
+from util.translation_format import TranslationFormat
 import json
-from pydantic import BaseModel
-
-class Conversation(BaseModel):
-    text: str
-    translation: str
-    nouns: list[dict[str, str]]
-    verbs: list[dict[str, str]]
-    adjectives: list[dict[str, str]]
 
 class ConvoModel:
 
@@ -31,7 +24,7 @@ class ConvoModel:
                         For translation field, put the English translation of the text."""
             }
         ]'''
-        self.api_manager = ConvoApiManager()
+        self.api_manager = GroqApi()
         self.client = self.api_manager.client
         self.conversation = [
             {
@@ -41,7 +34,7 @@ class ConvoModel:
                         f"You will be given a Korean sentence and 3 part of speech lists containing Korean nouns, verbs, and adjectives each respectively."
                         f"Your role is to translate that sentence and each word in the parts of speech lists appearing in the Korean sentence in that context."
                         f"You will only reply in the form of JSON."
-                        f"""When having a conversation, the JSON object must use the schema: {json.dumps(Conversation.model_json_schema(), indent=2)}. 
+                        f"""When having a conversation, the JSON object must use the schema: {json.dumps(TranslationFormat.model_json_schema(), indent=2)}. 
                         For text field, put the sentence. 
                         For translation field, put the English translation of the text.
                         For the nouns field, put dictionary key value pairs where key is the original Korean noun in the Korean nouns list and value is the translated meaning in its context.
@@ -62,7 +55,7 @@ class ConvoModel:
             response_format={"type": "json_object"},
         )
 
-        response = Conversation.model_validate(json.loads(conversation.choices[0].message.content)).model_dump()
+        response = TranslationFormat.model_validate(json.loads(conversation.choices[0].message.content)).model_dump()
 
         return response
     
@@ -101,12 +94,15 @@ class ConvoModel:
     
 if __name__ == "__main__":
     conversationalist = ConvoModel("Korean")
+    nouns = ['곶감', '뭐', '게']
+    verbs = ['크다']
+    adjectives = ['무섭다', '분명하다']
 
-    user_msg = """
+    user_msg = f"""
     sentence: 곶감이 뭐지? 크고 무서운 게 분명해.’
-    nouns: [곶감, 뭐, 게]
-    verbs: [크다]
-    adjectives: [무섭다, 분명하다]
+    nouns: {nouns}
+    verbs: {verbs}
+    adjectives: {adjectives}
     """
 
     conversationalist = ConvoModel("Korean")

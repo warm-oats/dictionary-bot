@@ -12,7 +12,7 @@ class PosTagModel:
 
     def extract_pos(self, phrase):
         okt = Okt()
-        pos_map = {'Noun': [], 'Verb': [], 'Adjective': []}
+        pos_map = {'nouns': [], 'verbs': [], 'adjectives': []}
 
         processed_phrase = okt.pos(phrase, norm = True, stem = True)
 
@@ -26,7 +26,9 @@ class PosTagModel:
         return pos_map # Always a dict of POS with key pair values
     
     def map_pos_meaning(self, phrase_map):
-        word_meaning_map = {'Noun': [], 'Verb': [], 'Adjective': []}
+        word_meaning_map = {'nouns': [], 'verbs': [], 'adjectives': []}
+
+        print(phrase_map)
 
         for pos, words in phrase_map.items():
             for word in words:
