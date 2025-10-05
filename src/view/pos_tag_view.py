@@ -8,6 +8,7 @@ class PosTagView:
     async def post_tag_info(self, ctx, phrase, pos_meaning_map):
         
         embeds = []
+        phrase = f"**{phrase}**\n_ _"
 
         for pos, meaning_map in pos_meaning_map.items():
             single_pos_map = {pos: meaning_map}
