@@ -39,7 +39,5 @@ class PosTagView:
         for key, value in word_map.items():
             word = key
             meaning = value
-
-        print(word, meaning)
         
         return f"({word}: {meaning}) "
