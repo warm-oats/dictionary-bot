@@ -17,9 +17,6 @@ class PosTagController(commands.Cog):
     async def async_define_word(self, ctx, *, phrase):
         pos_tag_map = self.pos_tag_model.extract_pos(phrase)
 
-        print(phrase)
-        print(pos_tag_map)
-
         await self.pos_tag_view.post_tag_info(ctx, pos_tag_map, phrase)
 
 async def setup(bot):

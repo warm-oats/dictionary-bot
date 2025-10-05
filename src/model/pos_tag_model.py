@@ -1,6 +1,11 @@
 from konlpy.tag import Okt
+from translator_model import TranslatorModel
 
 class PosTagModel:
+
+    translator = TranslatorModel()
+    translate_from = 'ko'
+    translate_to = 'en'
 
     def extract_pos(self, phrase):
         okt = Okt()
@@ -17,8 +22,23 @@ class PosTagModel:
 
         return pos_map # Always a dict of POS with key pair values
     
+    def map_pos_meaning(self, phrase_map):
+        word_meaning_map = {'Noun': [], 'Verb': [], 'Adjective': []}
+
+        for pos, words in phrase_map.items():
+            for word in words:
+                word_meaning_map[pos].append(self.map_word_meaning(word))
+
+        return word_meaning_map
+
+    def map_word_meaning(self, word):
+
+        meaning = self.translator.translate_word(word, self.translate_from, self.translate_to).text
+
+        return {word: meaning}
+    
 if __name__ == '__main__':
 
-    okt = PosTagModel()
+    tag_model = PosTagModel()
 
-    print(okt.extract_pos("수학적으로 n차 다항식이 n + 1개 점으로 일대일 대응됨을 증명하라"))
+    print(tag_model.map_pos_meaning(tag_model.extract_pos("‘곶감이 뭐지? 크고 무서운 게 분명해.’ 호랑이는 생각했다. ‘곶감을 피해야 해. 그렇지 않으면 나는 죽을 지 몰라.’")))

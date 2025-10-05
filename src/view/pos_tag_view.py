@@ -16,6 +16,14 @@ class PosTagView:
 
         for pos, words in pos_tag_map.items():
             if (words != []):
-                embed.add_field(name = f"**{pos.capitalize()}**", value = words, inline = False)
+                formatted_words = ""
+
+                for word in words:
+                    formatted_words += self.words_formatter(word)
+
+                    embed.add_field(name = f"**{pos.capitalize()}**", value = words, inline = False)
 
         return embed
+    
+    def word_formatter(self, word, meaning):
+        formatted_str = ""
