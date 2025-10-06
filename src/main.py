@@ -2,6 +2,7 @@ import os
 from discord import Intents
 from bot import Bot
 from dotenv import load_dotenv
+import discord
 
 intents = Intents.all()
 intents.message_content = True
@@ -18,12 +19,17 @@ async def setup_hook():
         if filename.endswith(".py"):
             await bot.load_extension(f"controller.{filename[:-3]}")
     
-    synced = await bot.tree.sync()
+    synced = await bot.tree.sync(guild = discord.Object(id = 520337076659421192))
     print(f"Synced {len(synced)} commands(s)")
 
-@bot.command(name="ping")
 async def ping(ctx):
-    await ctx.send(f"Pong! {round(bot.latency * 1000, 1)}ms")
+    await ctx.response.send_message(f"Pong! {round(bot.latency * 1000, 1)}ms")
+
+bot.tree.command(
+    name="ping",
+    description="Check bot ping",
+    guild=discord.Object(id=520337076659421192)
+)(ping)
 
 if __name__ == "__main__":
     bot.run(f"{BOT_TOKEN}")
