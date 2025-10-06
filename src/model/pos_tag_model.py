@@ -30,7 +30,7 @@ class PosTagModel:
     def map_pos_meaning(self, phrase, phrase_map):
 
         user_msg = f"""
-            sentence: {phrase}
+            sentence: {phrase.strip()}
             nouns: {phrase_map['nouns']}
             verbs: {phrase_map['verbs']}
             adjectives: {phrase_map['adjectives']}"""

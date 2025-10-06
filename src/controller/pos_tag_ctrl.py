@@ -13,8 +13,6 @@ class PosTagController(commands.Cog):
         self.pos_tag_model = PosTagModel()
         self.pos_tag_view = PosTagView()
 
-        pass
-
     @commands.command(name = "extract-pos")
     async def async_define_word(self, ctx, *, phrase):
         pos_tag_map = self.pos_tag_model.extract_pos(phrase)

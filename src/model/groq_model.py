@@ -26,15 +26,16 @@ class GroqModel:
         ]'''
         self.api_manager = GroqApi()
         self.client = self.api_manager.client
-        self.conversation = [
+        self.prompt = [
             {
                 "role": "system",
                 "content": 
                         f"You are a helpful {language} language translator."
                         f"You will be given a Korean sentence and 3 part of speech lists containing Korean nouns, verbs, and adjectives each respectively."
                         f"Your role is to translate that sentence and each word in the parts of speech lists appearing in the Korean sentence in that context."
+                        f"Before processing the Korean sentence, remove all unnecessary white space and line breaks from it."
                         f"You will only reply in the form of JSON."
-                        f"""When having a conversation, the JSON object must use the schema: {json.dumps(TranslationFormat.model_json_schema(), indent=2)}. 
+                        f"""The JSON object must use the schema: {json.dumps(TranslationFormat.model_json_schema(), indent=2)}. 
                         For text field, put the sentence. 
                         For translation field, put the English translation of the text.
                         For the nouns field, put dictionary key value pairs where key is the original Korean noun in the Korean nouns list and value is the translated meaning in its context.
@@ -46,7 +47,7 @@ class GroqModel:
 
     def groq_translate(self, message):
         
-        conversation = self.client.chat.completions.create(
+        translation_request = self.client.chat.completions.create(
             messages = message,
             model="openai/gpt-oss-120b",
             temperature=0.2,
@@ -55,7 +56,7 @@ class GroqModel:
             response_format={"type": "json_object"},
         )
 
-        response = TranslationFormat.model_validate(json.loads(conversation.choices[0].message.content)).model_dump()
+        response = TranslationFormat.model_validate(json.loads(translation_request.choices[0].message.content)).model_dump()
 
         return response
     
@@ -63,13 +64,13 @@ class GroqModel:
 
         self.parse_user_msg(message)
 
-        response = self.groq_translate(self.conversation)
+        response = self.groq_translate(self.prompt)
 
         self.parse_bot_msg(response['text'])
 
         return response
     
-    # Modifies self.conversation in place
+    # Modifies self.prompt in place
     def parse_user_msg(self, user_msg):
 
         user_msg_dict = {
@@ -77,7 +78,7 @@ class GroqModel:
             "content": f"{user_msg}"
         }
 
-        self.conversation.append(user_msg_dict)
+        self.prompt.append(user_msg_dict)
 
         return user_msg_dict
     
@@ -88,12 +89,12 @@ class GroqModel:
             "content": f"{bot_msg}"
         }
 
-        self.conversation.append(bot_msg_dict)
+        self.prompt.append(bot_msg_dict)
 
         return bot_msg_dict
     
 if __name__ == "__main__":
-    conversationalist = GroqModel("Korean")
+    translator = GroqModel("Korean")
     nouns = ['곶감', '뭐', '게']
     verbs = ['크다']
     adjectives = ['무섭다', '분명하다']
@@ -105,8 +106,8 @@ if __name__ == "__main__":
     adjectives: {adjectives}
     """
 
-    conversationalist = GroqModel("Korean")
+    translator = GroqModel("Korean")
 
-    response = conversationalist.send_message(user_msg)
+    response = translator.send_message(user_msg)
 
     print(response)
