@@ -5,10 +5,10 @@ from api_manager.groq_api import GroqApi
 from util.translation_format import TranslationFormat
 import json
 
-class ConvoModel:
+class GroqModel:
 
     def __init__(self, language):
-        store = '''[
+        archive = '''[
             {
                 "role": "system",
                 "content": 
@@ -50,7 +50,7 @@ class ConvoModel:
             messages = message,
             model="openai/gpt-oss-120b",
             temperature=0.2,
-            max_tokens=1500,
+            max_tokens=3000,
             stream=False,
             response_format={"type": "json_object"},
         )
@@ -93,7 +93,7 @@ class ConvoModel:
         return bot_msg_dict
     
 if __name__ == "__main__":
-    conversationalist = ConvoModel("Korean")
+    conversationalist = GroqModel("Korean")
     nouns = ['곶감', '뭐', '게']
     verbs = ['크다']
     adjectives = ['무섭다', '분명하다']
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     adjectives: {adjectives}
     """
 
-    conversationalist = ConvoModel("Korean")
+    conversationalist = GroqModel("Korean")
 
     response = conversationalist.send_message(user_msg)
 

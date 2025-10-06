@@ -3,10 +3,11 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from model.translator_model import TranslatorModel
+from model.groq_model import GroqModel
 
 class PosTagModel:
 
-    translator = TranslatorModel()
+    translator = GroqModel("Korean")
     translate_from = 'ko'
     translate_to = 'en'
 
@@ -19,27 +20,24 @@ class PosTagModel:
         for word_tup in processed_phrase:
             POS_i = 1
             WORD_i = 0
-            convert_pos = {'Noun': 'nouns', 'Verb': 'verbs', 'Adjective': 'adjectives'}
+            convert_pos = {'Noun': 'nouns', 'Verb': 'verbs', 'Adjective': 'adjectives'} # Formats pos_map dict keys
 
             if (word_tup[POS_i] in convert_pos):
                 pos_map[convert_pos[word_tup[POS_i]]].append(word_tup[WORD_i])
 
         return pos_map # Always a dict of {'pos': [Korean words]}
     
-    def map_pos_meaning(self, phrase_map):
-        word_meaning_map = {'nouns': [], 'verbs': [], 'adjectives': []}
+    def map_pos_meaning(self, phrase, phrase_map):
 
-        for pos, words in phrase_map.items():
-            for word in words:
-                word_meaning_map[pos].append(self.map_word_meaning(word))
+        user_msg = f"""
+            sentence: {phrase}
+            nouns: {phrase_map['nouns']}
+            verbs: {phrase_map['verbs']}
+            adjectives: {phrase_map['adjectives']}"""
+        
+        translation_map = self.translator.send_message(user_msg)
 
-        return word_meaning_map
-
-    def map_word_meaning(self, word):
-
-        meaning = self.translator.translate_word(word, self.translate_from, self.translate_to).text
-
-        return {word: meaning}
+        return translation_map
     
 if __name__ == '__main__':
 

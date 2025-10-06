@@ -5,12 +5,17 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 class PosTagView:
 
-    async def post_tag_info(self, ctx, phrase, pos_meaning_map):
+    async def post_tag_info(self, ctx, translation_package):
         
         embeds = []
-        phrase = f"**{phrase}**\n_ _"
+        phrase = f"**{translation_package['text']}**"
+        phrase_translation = f"**Translation: {translation_package['translation']}**"
+        content = f"{phrase}\n\n{phrase_translation}\n_ _"
 
-        for pos, meaning_map in pos_meaning_map.items():
+        translation_package.pop('text')
+        translation_package.pop('translation')
+
+        for pos, meaning_map in translation_package.items():
             single_pos_map = {pos: meaning_map}
 
             if (single_pos_map[pos] != []): # If pos meaning map not empty
@@ -18,7 +23,7 @@ class PosTagView:
 
                 embeds.append(embed)
 
-        await ctx.channel.send(content = phrase, embeds = embeds) # Send embed to discord
+        await ctx.channel.send(content = content, embeds = embeds) # Send embed to discord
 
     def create_embed(self, pos_meaning_map, phrase, put_pos_title = True):
         embed = discord.Embed(title = f"{phrase}")
