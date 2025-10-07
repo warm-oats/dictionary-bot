@@ -1,7 +1,7 @@
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from api_manager.groq_api import GroqApi
+from api.groq_api import GroqApi
 from util.translation_format import TranslationFormat
 import json
 
@@ -24,8 +24,8 @@ class GroqModel:
                         For translation field, put the English translation of the text."""
             }
         ]'''
-        self.api_manager = GroqApi()
-        self.client = self.api_manager.client
+        self.groq_api = GroqApi()
+        self.client = self.groq_api.client
         self.prompt = [
             {
                 "role": "system",

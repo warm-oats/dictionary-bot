@@ -1,14 +1,14 @@
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from api_manager.dict_api import DictApiManager
+from api.dict_api import DictApiManager
 
 class DictModel:
 
-    api_manager = DictApiManager()
+    dict_api = DictApiManager()
 
     def get_word_info(self, word):
-        api_response = DictModel.api_manager.request_json(word)
+        api_response = DictModel.dict_api.request_json(word)
         def_contexts = [] # List of all possible definition contexts
 
         for word_info in api_response:
