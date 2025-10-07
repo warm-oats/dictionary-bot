@@ -6,20 +6,20 @@ class DictView:
         super().__init__()
         self.phonetics = []
 
-    async def post_word_info(self, ctx, def_contexts, button_view):
+    async def post_word_info(self, ctx, pos_contexts, button_view):
         embeds = [] # List containing an embed for each definition context
-        contexts_count = len(def_contexts)
+        contexts_count = len(pos_contexts)
 
-        self.set_phonetics(def_contexts)
+        self.set_phonetics(pos_contexts)
 
-        for count, word_info in enumerate(def_contexts, start=1):
+        for count, word_info in enumerate(pos_contexts, start=1):
             embeds.append(self.create_embed(word_info, count, contexts_count))
 
         await ctx.channel.send(embed = embeds[0], view = button_view)
         await button_view.wait()
 
-    async def edit_word_info(self, def_context, context_num, contexts_count, interaction):
-        embed = self.create_embed(def_context, context_num, contexts_count)
+    async def edit_word_info(self, pos_context, context_num, contexts_count, interaction):
+        embed = self.create_embed(pos_context, context_num, contexts_count)
         await interaction.response.edit_message(embed = embed)
  
     def create_embed(self, word_info, context_num, contexts_count):
@@ -35,10 +35,10 @@ class DictView:
 
         return embed
     
-    def set_phonetics(self, def_contexts):
+    def set_phonetics(self, pos_contexts):
         phonetics = []
 
-        for context in def_contexts:
+        for context in pos_contexts:
             phonetics.extend(context["phonetics"])
 
         self.phonetics = phonetics

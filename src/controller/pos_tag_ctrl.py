@@ -8,16 +8,16 @@ from view.pos_tag_view import PosTagView
 class PosTagController(commands.Cog):
 
     def __init__(self, bot):
-        self.bot = bot
-        self.pos_tag_model = PosTagModel()
-        self.pos_tag_view = PosTagView()
+        self._bot = bot
+        self._pos_tag_model = PosTagModel()
+        self._pos_tag_view = PosTagView()
 
     @commands.command(name = "extract-pos")
     async def async_define_word(self, ctx, *, phrase):
-        pos_tag_map = self.pos_tag_model.extract_pos(phrase)
-        translation_package = self.pos_tag_model.map_pos_meaning(phrase, pos_tag_map)
+        pos_tag_map = self._pos_tag_model.extract_pos(phrase)
+        translation_package = self._pos_tag_model.map_pos_meaning(phrase, pos_tag_map)
 
-        await self.pos_tag_view.post_tag_info(ctx, translation_package)
+        await self._pos_tag_view.post_tag_info(ctx, translation_package)
 
 async def setup(bot):
     print("Inside pos tag controller setup function")
