@@ -12,7 +12,7 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
-# Runs as soon as script is run, setup once
+# Sync cogs and cog commands, run once at setup
 @bot.event
 async def setup_hook():
     for filename in os.listdir("src/controller"):
@@ -22,14 +22,13 @@ async def setup_hook():
     synced = await bot.tree.sync(guild = discord.Object(id = 520337076659421192))
     print(f"Synced {len(synced)} commands(s)")
 
+@bot.tree.command(
+    name = "ping",
+    description = "Check bot ping",
+    guild = discord.Object(id = 520337076659421192)
+)
 async def ping(ctx):
     await ctx.response.send_message(f"Pong! {round(bot.latency * 1000, 1)}ms")
-
-bot.tree.command(
-    name="ping",
-    description="Check bot ping",
-    guild=discord.Object(id=520337076659421192)
-)(ping)
 
 if __name__ == "__main__":
     bot.run(f"{BOT_TOKEN}")

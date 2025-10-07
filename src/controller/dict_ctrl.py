@@ -11,24 +11,22 @@ from main import bot
 class DictController(commands.Cog):
 
     def __init__(self, bot):
-        self.dict_model = DictModel()
-        self.dict_view = DictView()
-        self.bot = bot
+        super().__init__()
+        self._bot = bot
+        self._dict_model = DictModel()
+        self._dict_view = DictView()
 
-        self.define_decorator()
-
-    def define_decorator(self):
-        self.bot.tree.command(
-            name="define",
-            description="Define English word definition",
-            guild=discord.Object(id=520337076659421192)
+        self._bot.tree.command(
+            name = 'define',
+            description = 'Define English word',
+            guild = discord.Object(id = '520337076659421192')
         )(self.async_define_word)
 
     async def async_define_word(self, ctx, word: str):
-        def_contexts = self.dict_model.get_word_info(word) 
-        button_view = DirectionalButtonView(def_contexts, self.dict_view.edit_word_info)
+        def_contexts = self._dict_model.get_word_info(word) 
+        button_view = DirectionalButtonView(def_contexts, self._dict_view.edit_word_info)
 
-        await self.dict_view.post_word_info(ctx, def_contexts, button_view)
+        await self._dict_view.post_word_info(ctx, def_contexts, button_view)
 
 async def setup(bot):
     print("Inside dict controller setup function")

@@ -8,7 +8,7 @@ from view.convo_view import ConvoView
 class ConvoController(commands.Cog):
 
     def __init__(self, bot):
-        self.bot = bot
+        self._bot = bot
         self.convo_model = GroqModel("Korean")
         self.convo_view = ConvoView()
 
