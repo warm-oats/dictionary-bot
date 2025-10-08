@@ -1,0 +1,5 @@
+- TTS feature
+- Flashcard feature
+- Color mapping feature
+- Request, button validation
+- Request limiter

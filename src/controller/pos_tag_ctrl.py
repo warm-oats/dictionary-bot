@@ -20,10 +20,15 @@ class PosTagController(commands.Cog):
         )(self.extract_pos)
 
     async def extract_pos(self, ctx, *, sentence: str):
+
+        # Prevents discord 404 unknown interaction error: responding to interaction too late
+        await ctx.response.defer(ephemeral = True, thinking = True)
+
         pos_tag_map = self._pos_tag_model.extract_pos(sentence)
         translation_package = self._pos_tag_model.map_pos_meaning(sentence, pos_tag_map)
+        no_stem_words = self._pos_tag_model.extract_pos(sentence, False, False)
 
-        await self._pos_tag_view.post_tag_info(ctx, translation_package)
+        await self._pos_tag_view.post_tag_info(ctx, translation_package, no_stem_words)
 
 async def setup(bot):
     print("Inside pos tag controller setup function")
