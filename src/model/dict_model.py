@@ -7,16 +7,19 @@ class DictModel:
 
     dict_api = DictApiManager()
 
-    def get_word_info(self, word):
+    def get_word_info(self, word: str):
         api_response = DictModel.dict_api.request_json(word)
-        def_contexts = [] # List of all possible definition contexts
+
+        # List of all possible parts of speech contexts
+        pos_contexts = []
 
         for word_info in api_response:
-            def_contexts.append(self.process_word_info(word_info, word))
+            pos_contexts.append(self.process_word_info(word_info, word))
 
-        return list(filter(lambda def_context: def_context, def_contexts)) # Always be a list with dicts containing all definition contexts
+        # Always be a list with dicts containing all parts of speech contexts
+        return list(filter(lambda pos_context: pos_context, pos_contexts))
     
-    def process_word_info(self, unprocessed_word, word_name):
+    def process_word_info(self, unprocessed_word: str, word_name: str):
         word_info = {}
         word_info["word_name"] = ''.join([letter for letter in unprocessed_word['meta']['id'] if letter.isalpha()])
 
@@ -26,12 +29,13 @@ class DictModel:
             word_info["part_of_speech"] = unprocessed_word["fl"]
             word_info["phonetics"] = list(filter(lambda info: info, [prs_info.get("mw", None) for prs_info in unprocessed_word["hwi"].get("prs", [])]))
                 
-            return word_info # Always be a dict with word property key pair values
+             # Always be a dict with word property key pair values
+            return word_info
     
-    def is_valid_word(self, word_info, word_name):
+    def is_valid_word(self, word_info: dict[str, str], word_name: str):
         return word_info["word_name"] == word_name
     
 if __name__ == '__main__':
     dict_model = DictModel()
 
-    print(dict_model.get_word_info('what'))
+    dict_model.get_word_info('what')

@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+from discord import app_commands
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -10,7 +11,7 @@ from main import bot
 
 class DictController(commands.Cog):
 
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         super().__init__()
         self._bot = bot
         self._dict_model = DictModel()
@@ -20,14 +21,15 @@ class DictController(commands.Cog):
             name = 'define',
             description = 'Define English word',
             guild = discord.Object(id = '520337076659421192')
-        )(self.async_define_word)
+        )(self.define_word)
 
-    async def async_define_word(self, ctx, word: str):
-        def_contexts = self._dict_model.get_word_info(word) 
-        button_view = DirectionalButtonView(def_contexts, self._dict_view.edit_word_info)
+    @app_commands.describe(word = "English word")
+    async def define_word(self, ctx: discord.Interaction, word: str):
+        pos_contexts = self._dict_model.get_word_info(word) 
+        button_view = DirectionalButtonView(pos_contexts, self._dict_view.edit_word_info)
 
-        await self._dict_view.post_word_info(ctx, def_contexts, button_view)
+        await self._dict_view.post_word_info(ctx, pos_contexts, button_view)
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     print("Inside dict controller setup function")
     await bot.add_cog(DictController(bot))

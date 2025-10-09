@@ -11,7 +11,8 @@ class PosTagModel:
     translate_from = 'ko'
     translate_to = 'en'
 
-    def extract_pos(self, phrase, norm = True, stem = True):
+    # Extracts all parts of speech of sentence and maps it to a dict 
+    def extract_pos(self, phrase: str, norm: bool = True, stem: bool = True):
         okt = Okt()
         pos_map = {'nouns': [], 'verbs': [], 'adjectives': []}
 
@@ -34,7 +35,8 @@ class PosTagModel:
         #Always a dict of {'pos': [Korean words]}
         return pos_map
     
-    def map_pos_meaning(self, phrase, phrase_map):
+    # Maps all parts of speech words to its English translation
+    def map_pos_meaning(self, phrase: str, phrase_map: dict[str, list]):
 
         user_msg = f"""
             sentence: {phrase.strip()}

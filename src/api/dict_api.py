@@ -8,7 +8,7 @@ class DictApiManager:
     
     API_KEY = os.getenv('DICTIONARY_API')
 
-    def request_json(self, word):
+    def request_json(self, word: str):
         response = requests.get(f"https://dictionaryapi.com/api/v3/references/collegiate/json/{word}?key={DictApiManager.API_KEY}")
 
         return response.json()

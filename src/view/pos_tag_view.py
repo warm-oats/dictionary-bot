@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 class PosTagView:
 
-    async def post_tag_info(self, ctx, translation_package, no_stem_words, colorize):
+    async def post_tag_info(self, ctx: discord.Interaction, translation_package: dict, no_stem_words: dict[str, list], colorize: bool):
         
         embeds = []
         sentence = translation_package["text"]
@@ -34,7 +34,7 @@ class PosTagView:
         # Post embed
         await ctx.followup.send(content = content, embeds = embeds)
 
-    def create_embed(self, pos_meaning_map, sentence, put_pos_title = True):
+    def create_embed(self, pos_meaning_map: dict, sentence: bool, put_pos_title: bool = True):
         embed = discord.Embed(title = f"{sentence}")
 
         for pos, words_map in pos_meaning_map.items():
@@ -51,7 +51,7 @@ class PosTagView:
 
         return embed
     
-    def word_formatter(self, word_map):
+    def word_formatter(self, word_map: dict[str, str]):
 
         for key, value in word_map.items():
             word = key
@@ -59,7 +59,7 @@ class PosTagView:
         
         return f"({word}: {meaning})"
     
-    def sentence_colorizer(self, sentence, no_stem_words):
+    def sentence_colorizer(self, sentence: str, no_stem_words: dict[str, list]):
         # nouns: blue, adjectives: green, verbs: red
         POS_MAP = {"nouns": "\u001b[0;34m", "adjectives": "\u001b[0;32m", "verbs": "\u001b[0;31m"}
         COLOR_END= "\u001b[0;0m"

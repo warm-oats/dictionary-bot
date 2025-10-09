@@ -6,14 +6,14 @@ from util.custom_button import CustomButton
 
 class DirectionalButtonView(discord.ui.View):
 
-    def __init__(self, pos_contexts, edit_func, context_i = 0, context_num = 1):
+    def __init__(self, pos_contexts: list[dict], edit_func, context_i: int = 0, context_num: int = 1):
         super().__init__()
         self.pos_contexts = pos_contexts
         self.edit_func = edit_func
         self.context_i = context_i
         self.context_num = context_num
         
-        self._next_button = CustomButton(
+        self._forward_button = CustomButton(
             callback_func = self.change_button_dir, 
             label = ">>", 
             style = discord.ButtonStyle.blurple,
@@ -27,7 +27,7 @@ class DirectionalButtonView(discord.ui.View):
             )
 
         self.add_item(item = self._prev_button)
-        self.add_item(item = self._next_button)
+        self.add_item(item = self._forward_button)
 
     async def change_button_dir(self, interaction: discord.Interaction, direction: int):
 
@@ -41,7 +41,7 @@ class DirectionalButtonView(discord.ui.View):
 
             self.context_i += direction
 
-    def is_valid_index(self, index, lst_len):
+    def is_valid_index(self, index: int, lst_len: int):
         if index < 0 or index >= lst_len:
             return False
         

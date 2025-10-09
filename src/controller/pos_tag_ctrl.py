@@ -9,7 +9,7 @@ from view.pos_tag_view import PosTagView
 
 class PosTagController(commands.Cog):
 
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self._bot = bot
         self._pos_tag_model = PosTagModel()
         self._pos_tag_view = PosTagView()
@@ -22,22 +22,22 @@ class PosTagController(commands.Cog):
         )(self.extract_pos)
 
     @app_commands.describe(sentence = "Korean sentence", colorize = "Colorize all parts of speech?")
-    async def extract_pos(self, ctx, *, sentence: str, colorize: bool = False):
+    async def extract_pos(self, ctx: discord.Interaction, *, sentence: str, colorize: bool = False):
 
         # Defer due to fetching translations can take long
         await ctx.response.defer(ephemeral = True, thinking = True)
 
-        # Contains mapping of pos: words
+        # Contains mapping of pos: [words] pairs
         pos_tag_map = self._pos_tag_model.extract_pos(sentence)
 
         # Contains sentence, translation, and POS map
         translation_package = self._pos_tag_model.map_pos_meaning(sentence, pos_tag_map)
 
         # POS mapping of smallest unit of word in sentence for colorization
-        no_stem_words = self._pos_tag_model.extract_pos(sentence, False, False)
+        no_stem_words = self._pos_tag_model.extract_pos(sentence, True, False)
 
         await self._pos_tag_view.post_tag_info(ctx, translation_package, no_stem_words, colorize)
 
-async def setup(bot):
+async def setup(bot: commands.Bot):
     print("Inside pos tag controller setup function")
     await bot.add_cog(PosTagController(bot))

@@ -6,7 +6,7 @@ class DictView:
         super().__init__()
         self.phonetics = []
 
-    async def post_word_info(self, ctx, pos_contexts, button_view):
+    async def post_word_info(self, ctx: discord.Interaction, pos_contexts: list[dict], button_view):
         embeds = [] # List containing an embed for each definition context
         contexts_count = len(pos_contexts)
 
@@ -18,11 +18,11 @@ class DictView:
         await ctx.channel.send(embed = embeds[0], view = button_view)
         await button_view.wait()
 
-    async def edit_word_info(self, pos_context, context_num, contexts_count, interaction):
+    async def edit_word_info(self, pos_context: dict, context_num: int, contexts_count: int, interaction: discord.Interaction):
         embed = self.create_embed(pos_context, context_num, contexts_count)
         await interaction.response.edit_message(embed = embed)
  
-    def create_embed(self, word_info, context_num, contexts_count):
+    def create_embed(self, word_info: dict, context_num: int, contexts_count: int):
         embed = discord.Embed(title = f"{word_info["word_name"].capitalize()}   `{context_num} of {contexts_count}`")
 
         embed.add_field(name = "Pronunciations", value = ' '.join(self.phonetics), inline = False)
@@ -35,7 +35,7 @@ class DictView:
 
         return embed
     
-    def set_phonetics(self, pos_contexts):
+    def set_phonetics(self, pos_contexts: dict):
         phonetics = []
 
         for context in pos_contexts:

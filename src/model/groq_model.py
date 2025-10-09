@@ -7,23 +7,7 @@ import json
 
 class GroqModel:
 
-    def __init__(self, language):
-        archive = '''[
-            {
-                "role": "system",
-                "content": 
-                        f"You are a helpful {language} language teacher."
-                        f"Only use beginner level conversations."
-                        f"Keep replies short and simple, with a maximum of 2 sentences per reply and each reply should take no more than 35 words."
-                        f"Don't attach any phonetic or romanized spelling or pronunciation on the side when replying."
-                        f"Minimize talking in English unless directed otherwise."
-                        f"Use complete sentences with correct grammar."
-                        f"You will only reply in the form of JSON."
-                        f"""When having a conversation, the JSON object must use the schema: {json.dumps(Conversation.model_json_schema(), indent=2)}. 
-                        For text field, put the sentence. 
-                        For translation field, put the English translation of the text."""
-            }
-        ]'''
+    def __init__(self, language: str):
         self.groq_api = GroqApi()
         self.client = self.groq_api.client
         self.prompt = [
@@ -45,7 +29,7 @@ class GroqModel:
             }
         ]
 
-    def groq_translate(self, message):
+    def groq_translate(self, message: str):
         
         translation_request = self.client.chat.completions.create(
             messages = message,
@@ -60,8 +44,8 @@ class GroqModel:
 
         return response
     
-    def send_message(self, message):
-
+    def send_message(self, message: str):
+        
         self.parse_user_msg(message)
 
         response = self.groq_translate(self.prompt)
@@ -71,7 +55,7 @@ class GroqModel:
         return response
     
     # Modifies self.prompt in place
-    def parse_user_msg(self, user_msg):
+    def parse_user_msg(self, user_msg: str):
 
         user_msg_dict = {
             "role": "user",
@@ -82,7 +66,7 @@ class GroqModel:
 
         return user_msg_dict
     
-    def parse_bot_msg(self, bot_msg):
+    def parse_bot_msg(self, bot_msg: str):
         
         bot_msg_dict = {
             "role": "system",
