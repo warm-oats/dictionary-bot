@@ -6,11 +6,15 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 class PosTagView:
 
-    async def post_tag_info(self, ctx, translation_package, no_stem_words):
+    async def post_tag_info(self, ctx, translation_package, no_stem_words, colorize):
         
         embeds = []
-        sentence = self.sentence_colorizer(translation_package["text"], no_stem_words)
+        sentence = translation_package["text"]
         sentence_translation = translation_package["translation"]
+
+        if colorize: 
+            sentence = self.sentence_colorizer(translation_package["text"], no_stem_words)
+
         content = f"""{sentence}\n\n{sentence_translation}\n_ _"""
 
         # Remove text and translation field: no longer needed in pos mapping
