@@ -37,6 +37,7 @@ class PosTagView:
     def create_embed(self, pos_meaning_map: dict, sentence: bool, put_pos_title: bool = True):
         embed = discord.Embed(title = f"{sentence}")
 
+        # Create discord embed fields for different parts of speech
         for pos, words_map in pos_meaning_map.items():
             if (words_map != []):
                 formatted_words = ""
@@ -59,6 +60,7 @@ class PosTagView:
         
         return f"({word}: {meaning})"
     
+    # Color code parts of speech text
     def sentence_colorizer(self, sentence: str, no_stem_words: dict[str, list]):
         # nouns: blue, adjectives: green, verbs: red
         POS_MAP = {"nouns": "\u001b[0;34m", "adjectives": "\u001b[0;32m", "verbs": "\u001b[0;31m"}

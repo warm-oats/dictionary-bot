@@ -13,14 +13,8 @@ class PosTagController(commands.Cog):
         self._bot = bot
         self._pos_tag_model = PosTagModel()
         self._pos_tag_view = PosTagView()
-
-        # Add command to command tree, treated like decorator
-        self._bot.tree.command(
-            name = 'extract-pos',
-            description = 'Extract Korean sentence parts of speech in context',
-            guild = discord.Object(id = '520337076659421192')
-        )(self.extract_pos)
-
+    
+    @app_commands.command(name = 'extract-pos', description = 'Extract Korean sentence parts of speech in context')
     @app_commands.describe(sentence = "Korean sentence", colorize = "Colorize all parts of speech?")
     async def extract_pos(self, ctx: discord.Interaction, *, sentence: str, colorize: bool = False):
 

@@ -15,7 +15,7 @@ class DictView:
         for count, word_info in enumerate(pos_contexts, start=1):
             embeds.append(self.create_embed(word_info, count, contexts_count))
 
-        await ctx.channel.send(embed = embeds[0], view = button_view)
+        await ctx.followup.send(embed = embeds[0], view = button_view)
         await button_view.wait()
 
     async def edit_word_info(self, pos_context: dict, context_num: int, contexts_count: int, interaction: discord.Interaction):

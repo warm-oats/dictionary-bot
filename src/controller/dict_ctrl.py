@@ -17,16 +17,14 @@ class DictController(commands.Cog):
         self._dict_model = DictModel()
         self._dict_view = DictView()
 
-        self._bot.tree.command(
-            name = 'define',
-            description = 'Define English word',
-            guild = discord.Object(id = '520337076659421192')
-        )(self.define_word)
-
+    @app_commands.command(name = "define", description = "Define English word")
     @app_commands.describe(word = "English word")
     async def define_word(self, ctx: discord.Interaction, word: str):
         pos_contexts = self._dict_model.get_word_info(word) 
         button_view = DirectionalButtonView(pos_contexts, self._dict_view.edit_word_info)
+
+        # Defer due to fetching definitions can take long
+        await ctx.response.defer(ephemeral = True, thinking = True)
 
         await self._dict_view.post_word_info(ctx, pos_contexts, button_view)
 
