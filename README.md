@@ -1,1 +1,1 @@
-# dictionary-bot
+# Korean Language Learing Bot
