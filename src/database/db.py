@@ -7,8 +7,9 @@ load_dotenv()
 
 class Db:
 
+    connection = psycopg2.connect(**ast.literal_eval(os.getenv("DB_CONNECT")))
+
     def __init__(self):
-        self.connection = psycopg2.connect(**ast.literal_eval(os.getenv("DB_CONNECT")))
         self.cursor = self.connection.cursor()
 
     def deck_not_exist(self, user_id, deck_name) -> bool:
