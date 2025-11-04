@@ -94,6 +94,22 @@ class DeckController(commands.Cog):
         except ValueError as e:
             ctx.followup.send(content = e)
 
+    @app_commands.command(name = "delete-flashcard", description = "Delete a flashcard")
+    @app_commands.describe(flashcard_name = "Name of flashcard to be deleted (front side)", deck_name = "Deck name storing this flashcard")
+    async def delete_flashcard(self, ctx: discord.Interaction, flashcard_name: str, deck_name: str):
+
+        # Defer due to fetching definitions can take long
+        await ctx.response.defer(ephemeral = True, thinking = True)
+
+        try:
+            user_id = ctx.user.id
+
+            self._db.delete_flashcard(user_id, flashcard_name)
+
+            ctx.followup.send(content = f"Deleted flashcard '{flashcard_name}' from deck '{deck_name}'")
+        except ValueError as e:
+            ctx.followup.send(content = e)
+
 async def setup(bot: commands.Bot):
     print("Inside deck controller setup function")
     await bot.add_cog(DeckController(bot))
