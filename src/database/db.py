@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-class DataBase:
+class Db:
 
     def __init__(self):
         self.connection = psycopg2.connect(**ast.literal_eval(os.getenv("DB_CONNECT")))
@@ -129,6 +129,8 @@ class DataBase:
                                 INSERT into flashcards.flashcards(user_id, deck_name, front_page, back_page) 
                                 VALUES({user_id}, '{deck_name}', '{vocab}', '{definition}');
                                 """)
+            
+            self.connection.commit()
         except ValueError as e:
             print(e)
         
@@ -144,11 +146,26 @@ class DataBase:
                                 AND front_page = '{vocab}'
                                 AND deck_name = '{deck_name}';
                                 """)
+            
+            self.connection.commit()
         except ValueError as e:
             print(e)
         
-    def update_word(self, user_id, new_word, new_definition, deck_name):
-        pass
+    def update_word(self, user_id, deck_name, vocab, new_vocab, new_definition):
+
+        try:
+            self.deck_not_exist(user_id, deck_name)
+            self.vocab_not_exist(user_id, deck_name, vocab)
+
+            self.cursor.execute(f"""
+                                UPDATE flashcards.flashcards
+                                SET front_page = '{new_vocab}', back_page = '{new_definition}'
+                                WHERE deck_name = '{deck_name}'
+                                AND user_id = {user_id}
+                                AND front_page = '{vocab}';
+                                """)
+        except ValueError as e:
+            print(e)
 
     def fetch_vocab(self):
         
@@ -167,11 +184,11 @@ class DataBase:
         print("Data from Flashcards:- ", record)
 
 if __name__ == "__main__":
-    db = DataBase()
+    db = Db()
 
     db.create_deck(123456, "Korean Stuff")
     db.fetch_vocab()
-    db.update_deck_name(123456, "Korean Stuff", "Korean Stuff")
+    db.update_deck_name(123456, "Korean feafew", "Korean Stuff")
     print('---------------------')
     db.fetch_vocab()
     db.add_vocab(123456, "what", "Means hello", "Korean Stuff")
@@ -180,6 +197,9 @@ if __name__ == "__main__":
     db.delete_vocab(123456, "whattttttttt", "Korean Stuff")
     print('---------------------')
     db.fetch_vocab()
+    db.update_word(123456, "Korean Stuff", "what", "hey", "Means bruuhhh")
+    db.fetch_vocab()
+    print('-------------------------')
     db.delete_deck(123456, "Korean Stuff")
     print('---------------------')
     db.fetch_vocab()
