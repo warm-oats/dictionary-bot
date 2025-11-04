@@ -100,7 +100,7 @@ class DeckController(commands.Cog):
         try:
             user_id = ctx.user.id
 
-            self._db.add_flashcard(user_id, flashcard_front, flashcard_back)
+            self._db.add_flashcard(user_id, deck_name, flashcard_front, flashcard_back)
 
             await ctx.followup.send(content = f"Added flashcard '{flashcard_front}' to deck '{deck_name}'")
         except ValueError as e:
@@ -116,7 +116,7 @@ class DeckController(commands.Cog):
         try:
             user_id = ctx.user.id
 
-            self._db.delete_flashcard(user_id, flashcard_name)
+            self._db.delete_flashcard(user_id, deck_name, flashcard_name)
 
             await ctx.followup.send(content = f"Deleted flashcard '{flashcard_name}' from deck '{deck_name}'")
         except ValueError as e:
