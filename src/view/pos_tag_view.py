@@ -71,10 +71,3 @@ class PosTagView:
         colorized_sentence = f"{ANSI_HEAD}{sentence}{ANSI_TAIL}"
 
         return colorized_sentence
-    
-if __name__ == "__main__":
-    pos_tag_view = PosTagView()
-    sentence = "‘곶감이 뭐지? 크고 무서운 게 분명해.’ 호랑이는 생각했다. ‘곶감을 피해야 해. 그렇지 않으면 나는 죽을 지 몰라.’"
-    no_stem_words = {'nouns': ['나', '곶감', '게', '호랑이', '뭐', '해', '죽', '생각', '피해'], 'verbs': ['않으면', '지', '크고', '했다', '몰라'], 'adjectives': ['그렇지', '분명해', '무서운']}
-
-    print(pos_tag_view.sentence_colorizer(sentence, no_stem_words))

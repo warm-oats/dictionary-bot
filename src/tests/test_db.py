@@ -2,293 +2,308 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 import pytest
-from unittest.mock import Mock, patch
-from database.db import Db
+from unittest.mock import patch, MagicMock
+import sys
+
+# Mock the database connection before importing db module
+mock_connect = MagicMock()
+mock_conn = MagicMock()
+mock_cursor = MagicMock()
+mock_connect.return_value = mock_conn
+mock_conn.cursor.return_value = mock_cursor
+
+with patch('psycopg2.connect', mock_connect):
+    from database.db import Db
+
 
 @pytest.fixture
-def mock_db_connection():
-    """Fixture to mock database connection and cursor"""
-    with patch('database.db.psycopg2.connect') as mock_connect:
-        mock_conn = Mock()
-        mock_cursor = Mock()
-        mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
+def db_instance():
+    """Fixture to create a Db instance with mocked cursor."""
+    db = Db()
+    db.cursor = MagicMock()
+    db.connection = MagicMock()
+    return db
+
+
+class TestDeckNotExist:
+    def test_deck_exists_no_error(self, db_instance):
+        """Test that no error is raised when deck exists."""
+        db_instance.cursor.fetchone.return_value = (True,)
         
-        yield mock_conn, mock_cursor
-
-
-@pytest.fixture
-def db_instance(mock_db_connection):
-    """Fixture to create a Db instance with mocked connection"""
-    mock_conn, mock_cursor = mock_db_connection
-    with patch('database.db.load_dotenv'), patch('database.db.os.getenv', return_value="{}"):
-        db = Db()
-        return db
-
-
-class TestDeckValidation:
-    """Test deck existence validation methods"""
-    
-    def test_deck_not_exist_raises_error_when_deck_missing(self, db_instance):
-        """Test that deck_not_exist raises ValueError when deck doesn't exist"""
-        db_instance.cursor.fetchone.return_value = [False]
+        # Should not raise an error
+        db_instance.deck_not_exist(1, "test_deck")
+        
+    def test_deck_does_not_exist_raises_error(self, db_instance):
+        """Test that ValueError is raised when deck doesn't exist."""
+        db_instance.cursor.fetchone.return_value = (False,)
         
         with pytest.raises(ValueError, match="Deck 'test_deck' does not exist"):
-            db_instance.deck_not_exist(1, 'test_deck')
-    
-    def test_deck_not_exist_passes_when_deck_exists(self, db_instance):
-        """Test that deck_not_exist doesn't raise error when deck exists"""
-        db_instance.cursor.fetchone.return_value = [True]
+            db_instance.deck_not_exist(1, "test_deck")
+
+
+class TestFlashcardNotExist:
+    def test_flashcard_exists_no_error(self, db_instance):
+        """Test that no error is raised when flashcard exists."""
+        db_instance.cursor.fetchone.return_value = (True,)
         
-        # Should not raise any exception
-        db_instance.deck_not_exist(1, 'test_deck')
-    
-    def test_deck_exist_raises_error_when_deck_present(self, db_instance):
-        """Test that deck_exist raises ValueError when deck already exists"""
-        db_instance.cursor.fetchone.return_value = [True]
+        # Should not raise an error
+        db_instance.flashcard_not_exist(1, "test_deck", "test_flashcard")
+        
+    def test_flashcard_does_not_exist_raises_error(self, db_instance):
+        """Test that ValueError is raised when flashcard doesn't exist."""
+        db_instance.cursor.fetchone.return_value = (False,)
+        
+        with pytest.raises(ValueError, match="flashcard 'test_flashcard' does not exist"):
+            db_instance.flashcard_not_exist(1, "test_deck", "test_flashcard")
+
+
+class TestDeckExist:
+    def test_deck_does_not_exist_no_error(self, db_instance):
+        """Test that no error is raised when deck doesn't exist."""
+        db_instance.cursor.fetchone.return_value = (False,)
+        
+        # Should not raise an error
+        db_instance.deck_exist(1, "test_deck")
+        
+    def test_deck_exists_raises_error(self, db_instance):
+        """Test that ValueError is raised when deck already exists."""
+        db_instance.cursor.fetchone.return_value = (True,)
         
         with pytest.raises(ValueError, match="Deck 'test_deck' already exist"):
-            db_instance.deck_exist(1, 'test_deck')
-    
-    def test_deck_exist_passes_when_deck_missing(self, db_instance):
-        """Test that deck_exist doesn't raise error when deck doesn't exist"""
-        db_instance.cursor.fetchone.return_value = [False]
-        
-        # Should not raise any exception
-        db_instance.deck_exist(1, 'test_deck')
+            db_instance.deck_exist(1, "test_deck")
 
 
-class TestVocabValidation:
-    """Test vocabulary existence validation methods"""
-    
-    def test_vocab_not_exist_raises_error_when_vocab_missing(self, db_instance):
-        """Test that vocab_not_exist raises ValueError when vocab doesn't exist"""
-        db_instance.cursor.fetchone.return_value = [False]
+class TestFlashcardExist:
+    def test_flashcard_does_not_exist_no_error(self, db_instance):
+        """Test that no error is raised when flashcard doesn't exist."""
+        db_instance.cursor.fetchone.return_value = (False,)
         
-        with pytest.raises(ValueError, match="Vocab 'hello' does not exist"):
-            db_instance.vocab_not_exist(1, 'test_deck', 'hello')
-    
-    def test_vocab_not_exist_passes_when_vocab_exists(self, db_instance):
-        """Test that vocab_not_exist doesn't raise error when vocab exists"""
-        db_instance.cursor.fetchone.return_value = [True]
+        # Should not raise an error
+        db_instance.flashcard_exist(1, "test_deck", "test_flashcard")
         
-        # Should not raise any exception
-        db_instance.vocab_not_exist(1, 'test_deck', 'hello')
-    
-    def test_vocab_exist_raises_error_when_vocab_present(self, db_instance):
-        """Test that vocab_exist raises ValueError when vocab already exists"""
-        db_instance.cursor.fetchone.return_value = [True]
+    def test_flashcard_exists_raises_error(self, db_instance):
+        """Test that ValueError is raised when flashcard already exists."""
+        db_instance.cursor.fetchone.return_value = (True,)
         
-        with pytest.raises(ValueError, match="Vocab 'hello' already exist"):
-            db_instance.vocab_exist(1, 'test_deck', 'hello')
-    
-    def test_vocab_exist_passes_when_vocab_missing(self, db_instance):
-        """Test that vocab_exist doesn't raise error when vocab doesn't exist"""
-        db_instance.cursor.fetchone.return_value = [False]
-        
-        # Should not raise any exception
-        db_instance.vocab_exist(1, 'test_deck', 'hello')
+        with pytest.raises(ValueError, match="flashcard 'test_flashcard' already exist"):
+            db_instance.flashcard_exist(1, "test_deck", "test_flashcard")
 
 
 class TestCreateDeck:
-    """Test deck creation functionality"""
-    
     def test_create_deck_success(self, db_instance):
-        """Test successful deck creation"""
-        db_instance.cursor.fetchone.return_value = [False]
+        """Test successful deck creation."""
+        db_instance.cursor.fetchone.return_value = (False,)
         
-        result = db_instance.create_deck(1, 'new_deck')
+        db_instance.create_deck(1, "new_deck")
         
-        assert result is None
-        db_instance.cursor.execute.assert_called()
+        assert db_instance.cursor.execute.call_count == 2
         db_instance.connection.commit.assert_called_once()
-    
+        
     def test_create_deck_already_exists(self, db_instance):
-        """Test creating a deck that already exists returns error"""
-        db_instance.cursor.fetchone.return_value = [True]
+        """Test that creating an existing deck raises ValueError."""
+        db_instance.cursor.fetchone.return_value = (True,)
         
-        result = db_instance.create_deck(1, 'existing_deck')
-        
-        assert isinstance(result, ValueError)
-        assert "already exist" in str(result)
-        db_instance.connection.commit.assert_not_called()
+        with pytest.raises(ValueError, match="Deck 'existing_deck' already exist"):
+            db_instance.create_deck(1, "existing_deck")
 
 
 class TestDeleteDeck:
-    """Test deck deletion functionality"""
-    
     def test_delete_deck_success(self, db_instance):
-        """Test successful deck deletion"""
-        db_instance.cursor.fetchone.return_value = [True]
+        """Test successful deck deletion."""
+        db_instance.cursor.fetchone.return_value = (True,)
         
-        result = db_instance.delete_deck(1, 'test_deck')
+        db_instance.delete_deck(1, "test_deck")
         
-        assert result is None
-        assert db_instance.cursor.execute.call_count >= 2  # DELETE from both tables
+        assert db_instance.cursor.execute.call_count == 3
         db_instance.connection.commit.assert_called_once()
-    
+        
     def test_delete_deck_not_exists(self, db_instance):
-        """Test deleting a deck that doesn't exist returns error"""
-        db_instance.cursor.fetchone.return_value = [False]
+        """Test that deleting non-existent deck raises ValueError."""
+        db_instance.cursor.fetchone.return_value = (False,)
         
-        result = db_instance.delete_deck(1, 'nonexistent_deck')
-        
-        assert isinstance(result, ValueError)
-        assert "does not exist" in str(result)
-        db_instance.connection.commit.assert_not_called()
+        with pytest.raises(ValueError, match="Deck 'nonexistent_deck' does not exist"):
+            db_instance.delete_deck(1, "nonexistent_deck")
 
 
 class TestUpdateDeckName:
-    """Test deck name update functionality"""
-    
     def test_update_deck_name_success(self, db_instance):
-        """Test successful deck name update"""
-        db_instance.cursor.fetchone.return_value = [True]
+        """Test successful deck name update."""
+        db_instance.cursor.fetchone.return_value = (True,)
         
-        result = db_instance.update_deck_name(1, 'old_deck', 'new_deck')
+        db_instance.update_deck_name(1, "old_deck", "new_deck")
         
-        assert result is None
-        assert db_instance.cursor.execute.call_count >= 2  # UPDATE both tables
+        assert db_instance.cursor.execute.call_count == 3
         db_instance.connection.commit.assert_called_once()
-    
+        
     def test_update_deck_name_not_exists(self, db_instance):
-        """Test updating a deck that doesn't exist returns error"""
-        db_instance.cursor.fetchone.return_value = [False]
+        """Test that updating non-existent deck raises ValueError."""
+        db_instance.cursor.fetchone.return_value = (False,)
         
-        result = db_instance.update_deck_name(1, 'nonexistent_deck', 'new_name')
-        
-        assert isinstance(result, ValueError)
-        assert "does not exist" in str(result)
-        db_instance.connection.commit.assert_not_called()
+        with pytest.raises(ValueError, match="Deck 'nonexistent_deck' does not exist"):
+            db_instance.update_deck_name(1, "nonexistent_deck", "new_deck")
 
 
-class TestAddVocab:
-    """Test vocabulary addition functionality"""
-    
-    def test_add_vocab_success(self, db_instance):
-        """Test successful vocabulary addition"""
-        # First call checks deck exists, second call checks vocab doesn't exist
-        db_instance.cursor.fetchone.side_effect = [[True], [False]]
+class TestAddFlashcard:
+    def test_add_flashcard_success(self, db_instance):
+        """Test successful flashcard addition."""
+        db_instance.cursor.fetchone.side_effect = [(True,), (False,)]
         
-        result = db_instance.add_vocab(1, 'hello', 'greeting', 'test_deck')
+        db_instance.add_flashcard(1, "test_deck", "front", "back")
         
-        assert result is None
-        db_instance.cursor.execute.assert_called()
+        assert db_instance.cursor.execute.call_count == 3
         db_instance.connection.commit.assert_called_once()
-    
-    def test_add_vocab_deck_not_exists(self, db_instance):
-        """Test adding vocab to non-existent deck returns error"""
-        db_instance.cursor.fetchone.return_value = [False]
         
-        result = db_instance.add_vocab(1, 'hello', 'greeting', 'nonexistent_deck')
+    def test_add_flashcard_deck_not_exists(self, db_instance):
+        """Test that adding flashcard to non-existent deck raises ValueError."""
+        db_instance.cursor.fetchone.return_value = (False,)
         
-        assert isinstance(result, ValueError)
-        assert "does not exist" in str(result)
-        db_instance.connection.commit.assert_not_called()
-    
-    def test_add_vocab_already_exists(self, db_instance):
-        """Test adding duplicate vocabulary returns error"""
-        # Deck exists, vocab exists
-        db_instance.cursor.fetchone.side_effect = [[True], [True]]
+        with pytest.raises(ValueError, match="Deck 'nonexistent_deck' does not exist"):
+            db_instance.add_flashcard(1, "nonexistent_deck", "front", "back")
+            
+    def test_add_flashcard_already_exists(self, db_instance):
+        """Test that adding duplicate flashcard raises ValueError."""
+        db_instance.cursor.fetchone.side_effect = [(True,), (True,)]
         
-        result = db_instance.add_vocab(1, 'hello', 'greeting', 'test_deck')
-        
-        assert isinstance(result, ValueError)
-        assert "already exist" in str(result)
-        db_instance.connection.commit.assert_not_called()
+        with pytest.raises(ValueError, match="flashcard 'front' already exist"):
+            db_instance.add_flashcard(1, "test_deck", "front", "back")
 
 
-class TestDeleteVocab:
-    """Test vocabulary deletion functionality"""
-    
-    def test_delete_vocab_success(self, db_instance):
-        """Test successful vocabulary deletion"""
-        # Deck exists, vocab exists
-        db_instance.cursor.fetchone.side_effect = [[True], [True]]
+class TestFetchFlashcardBack:
+    def test_fetch_flashcard_back_success(self, db_instance):
+        """Test successful flashcard back retrieval."""
+        db_instance.cursor.fetchone.side_effect = [(True,), ("back content",)]
         
-        result = db_instance.delete_vocab(1, 'hello', 'test_deck')
+        result = db_instance.fetch_flashcard_back(1, "test_deck", "front")
         
-        assert result is None
-        db_instance.cursor.execute.assert_called()
+        assert result == "back content"
+        
+    def test_fetch_flashcard_back_not_exists(self, db_instance):
+        """Test that fetching non-existent flashcard raises ValueError."""
+        db_instance.cursor.fetchone.return_value = (False,)
+        
+        with pytest.raises(ValueError, match="flashcard 'nonexistent' does not exist"):
+            db_instance.fetch_flashcard_back(1, "test_deck", "nonexistent")
+
+
+class TestDeleteFlashcard:
+    def test_delete_flashcard_success(self, db_instance):
+        """Test successful flashcard deletion."""
+        db_instance.cursor.fetchone.side_effect = [(True,), (True,)]
+        
+        db_instance.delete_flashcard(1, "test_deck", "flashcard")
+        
+        assert db_instance.cursor.execute.call_count == 3
         db_instance.connection.commit.assert_called_once()
-    
-    def test_delete_vocab_not_exists(self, db_instance):
-        """Test deleting non-existent vocab returns error"""
-        # Deck exists, vocab doesn't exist
-        db_instance.cursor.fetchone.side_effect = [[True], [False]]
         
-        result = db_instance.delete_vocab(1, 'hello', 'test_deck')
+    def test_delete_flashcard_deck_not_exists(self, db_instance):
+        """Test that deleting flashcard from non-existent deck raises ValueError."""
+        db_instance.cursor.fetchone.return_value = (False,)
         
-        assert isinstance(result, ValueError)
-        assert "does not exist" in str(result)
-        db_instance.connection.commit.assert_not_called()
+        with pytest.raises(ValueError, match="Deck 'nonexistent_deck' does not exist"):
+            db_instance.delete_flashcard(1, "nonexistent_deck", "flashcard")
+            
+    def test_delete_flashcard_not_exists(self, db_instance):
+        """Test that deleting non-existent flashcard raises ValueError."""
+        db_instance.cursor.fetchone.side_effect = [(True,), (False,)]
+        
+        with pytest.raises(ValueError, match="flashcard 'nonexistent' does not exist"):
+            db_instance.delete_flashcard(1, "test_deck", "nonexistent")
 
 
-class TestUpdateWord:
-    """Test vocabulary update functionality"""
-    
-    def test_update_word_success(self, db_instance):
-        """Test successful vocabulary update"""
-        # Deck exists, vocab exists
-        db_instance.cursor.fetchone.side_effect = [[True], [True]]
+class TestUpdateFlashcard:
+    def test_update_flashcard_success(self, db_instance):
+        """Test successful flashcard update."""
+        db_instance.cursor.fetchone.side_effect = [(True,), (True,)]
         
-        result = db_instance.update_word(1, 'test_deck', 'hello', 'hi', 'casual greeting')
+        db_instance.update_flashcard(1, "test_deck", "old_front", "new_front", "new_back")
         
-        assert result is None
-        db_instance.cursor.execute.assert_called()
-    
-    def test_update_word_deck_not_exists(self, db_instance):
-        """Test updating word in non-existent deck returns error"""
-        db_instance.cursor.fetchone.return_value = [False]
+        assert db_instance.cursor.execute.call_count == 3
         
-        result = db_instance.update_word(1, 'nonexistent_deck', 'hello', 'hi', 'greeting')
+    def test_update_flashcard_deck_not_exists(self, db_instance):
+        """Test that updating flashcard in non-existent deck raises ValueError."""
+        db_instance.cursor.fetchone.return_value = (False,)
         
-        assert isinstance(result, ValueError)
-        assert "does not exist" in str(result)
-    
-    def test_update_word_vocab_not_exists(self, db_instance):
-        """Test updating non-existent vocab returns error"""
-        # Deck exists, vocab doesn't exist
-        db_instance.cursor.fetchone.side_effect = [[True], [False]]
+        with pytest.raises(ValueError, match="Deck 'nonexistent_deck' does not exist"):
+            db_instance.update_flashcard(1, "nonexistent_deck", "old", "new_front", "new_back")
+            
+    def test_update_flashcard_not_exists(self, db_instance):
+        """Test that updating non-existent flashcard raises ValueError."""
+        db_instance.cursor.fetchone.side_effect = [(True,), (False,)]
         
-        result = db_instance.update_word(1, 'test_deck', 'nonexistent', 'new', 'def')
-        
-        assert isinstance(result, ValueError)
-        assert "does not exist" in str(result)
+        with pytest.raises(ValueError, match="flashcard 'nonexistent' does not exist"):
+            db_instance.update_flashcard(1, "test_deck", "nonexistent", "new_front", "new_back")
 
 
-class TestFetchVocab:
-    """Test vocabulary fetching functionality"""
-    
-    def test_fetch_vocab_success(self, db_instance, capsys):
-        """Test successful vocabulary fetching"""
-        mock_deck_data = [(1, 'deck1'), (1, 'deck2')]
-        mock_flashcard_data = [(1, 'deck1', 'hello', 'greeting')]
+class TestFetchFlashcards:
+    def test_fetch_flashcards_success(self, db_instance):
+        """Test successful flashcards retrieval."""
+        db_instance.cursor.fetchone.return_value = (True,)
+        db_instance.cursor.fetchall.return_value = [
+            ("front1", "back1"),
+            ("front2", "back2")
+        ]
         
-        db_instance.cursor.fetchall.side_effect = [mock_deck_data, mock_flashcard_data]
+        result = db_instance.fetch_flashcards(1, "test_deck")
         
-        db_instance.fetch_vocab()
+        assert len(result) == 2
+        assert result[0] == ("front1", "back1")
+        assert result[1] == ("front2", "back2")
         
-        captured = capsys.readouterr()
-        assert "Data from Decks:-" in captured.out
-        assert "Data from Flashcards:-" in captured.out
-        assert db_instance.cursor.execute.call_count == 2
+    def test_fetch_flashcards_deck_not_exists(self, db_instance):
+        """Test that fetching flashcards from non-existent deck raises ValueError."""
+        db_instance.cursor.fetchone.return_value = (False,)
+        
+        with pytest.raises(ValueError, match="Deck 'nonexistent_deck' does not exist"):
+            db_instance.fetch_flashcards(1, "nonexistent_deck")
 
 
-class TestSQLInjectionProtection:
-    """Test SQL injection vulnerability (current implementation is vulnerable)"""
-    
-    def test_sql_injection_in_deck_name(self, db_instance):
-        """Test that SQL injection in deck name is a concern"""
-        malicious_deck_name = "test'; DROP TABLE flashcards.user_decks; --"
-        db_instance.cursor.fetchone.return_value = [False]
+class TestFetchDecks:
+    def test_fetch_decks_success(self, db_instance):
+        """Test successful decks retrieval."""
+        db_instance.cursor.fetchall.return_value = [
+            ("deck1",),
+            ("deck2",),
+            ("deck3",)
+        ]
         
-        # This test documents the vulnerability - the code should use parameterized queries
-        db_instance.create_deck(1, malicious_deck_name)
+        result = db_instance.fetch_decks(1)
         
-        # Check that the malicious string was passed to execute
-        call_args = db_instance.cursor.execute.call_args[0][0]
-        assert malicious_deck_name in call_args
+        assert len(result) == 3
+        assert result[0] == ("deck1",)
+        assert result[1] == ("deck2",)
+        
+    def test_fetch_decks_empty(self, db_instance):
+        """Test fetching decks when user has no decks."""
+        db_instance.cursor.fetchall.return_value = []
+        
+        result = db_instance.fetch_decks(1)
+        
+        assert result == []
+
+
+class TestGetDeckLength:
+    def test_get_deck_length_success(self, db_instance):
+        """Test successful deck length retrieval."""
+        db_instance.cursor.fetchone.side_effect = [(True,), (5,)]
+        
+        result = db_instance.get_deck_length(1, "test_deck")
+        
+        assert result == 5
+        
+    def test_get_deck_length_deck_not_exists(self, db_instance):
+        """Test that getting length of non-existent deck raises ValueError."""
+        db_instance.cursor.fetchone.return_value = (False,)
+        
+        with pytest.raises(ValueError, match="Deck 'nonexistent_deck' does not exist"):
+            db_instance.get_deck_length(1, "nonexistent_deck")
+            
+    def test_get_deck_length_empty_deck(self, db_instance):
+        """Test getting length of empty deck."""
+        db_instance.cursor.fetchone.side_effect = [(True,), (0,)]
+        
+        result = db_instance.get_deck_length(1, "test_deck")
+        
+        assert result == 0
 
 
 if __name__ == "__main__":

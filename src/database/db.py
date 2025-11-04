@@ -232,11 +232,3 @@ class Db:
             return deck_len
         except ValueError as e:
             raise ValueError(e)
-        
-if __name__ == '__main__':
-    db = Db()
-
-    try:
-        db.create_deck(313393208744869892, "Korean")
-    except Exception as e:
-        print(e)
