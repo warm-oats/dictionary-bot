@@ -8,9 +8,7 @@ load_dotenv()
 class Db:
 
     connection = psycopg2.connect(**ast.literal_eval(os.getenv("DB_CONNECT")))
-
-    def __init__(self):
-        self.cursor = self.connection.cursor()
+    cursor = connection.cursor()
 
     def deck_not_exist(self, user_id, deck_name) -> bool:
         self.cursor.execute(f"""
@@ -168,18 +166,50 @@ class Db:
         except ValueError as e:
             return e
 
-    def fetch_vocab(self):
+    def fetch_vocabs(self, user_id, deck_name):
         
-        self.cursor.execute("select * from flashcards.user_decks;")
+        try:
+            self.deck_not_exist(user_id, deck_name)
 
-        # Fetch all rows from database
-        record = self.cursor.fetchall()
+            self.cursor.execute(f"""
+                                SELECT front_page, back_page
+                                FROM flashcards.flashcards
+                                WHERE user_id = {user_id}
+                                AND deck_name = '{deck_name}';
+                                """)
+            
+            vocabs = self.cursor.fetchall()
 
-        print("Data from Decks:- ", record)
+            return vocabs
+        except ValueError as e:
+            return e
 
-        self.cursor.execute("select * from flashcards.flashcards;")
+    def fetch_decks(self, user_id):
+        
+        self.cursor.execute(f"""
+                            SELECT deck_name
+                            FROM flashcards.user_decks
+                            WHERE user_id = {user_id};
+                            """)
+        
+        all_decks = self.cursor.fetchall()
 
-        # Fetch all rows from database
-        record = self.cursor.fetchall()
+        return all_decks
+    
+    def get_deck_length(self, user_id, deck_name):
 
-        print("Data from Flashcards:- ", record)
+        try:
+            self.deck_not_exist(user_id, deck_name)
+
+            self.cursor.execute(f"""
+                                SELECT COUNT(*)
+                                FROM flashcards.flashcards
+                                WHERE user_id = {user_id}
+                                AND deck_name = '{deck_name}';
+                                """)
+            
+            deck_len = self.cursor.fetchone()[0]
+
+            return deck_len
+        except ValueError as e:
+            return e

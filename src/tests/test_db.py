@@ -3,12 +3,12 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 import pytest
 from unittest.mock import Mock, patch
-from database.db import Db
+from database.service import Db
 
 @pytest.fixture
 def mock_db_connection():
     """Fixture to mock database connection and cursor"""
-    with patch('database.db.psycopg2.connect') as mock_connect:
+    with patch('database.service.psycopg2.connect') as mock_connect:
         mock_conn = Mock()
         mock_cursor = Mock()
         mock_conn.cursor.return_value = mock_cursor
@@ -21,7 +21,7 @@ def mock_db_connection():
 def db_instance(mock_db_connection):
     """Fixture to create a Db instance with mocked connection"""
     mock_conn, mock_cursor = mock_db_connection
-    with patch('database.db.load_dotenv'), patch('database.db.os.getenv', return_value="{}"):
+    with patch('database.service.load_dotenv'), patch('database.service.os.getenv', return_value="{}"):
         db = Db()
         return db
 
