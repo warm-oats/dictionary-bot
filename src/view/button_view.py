@@ -18,13 +18,13 @@ class DirectionalButtonView(discord.ui.View):
             label = ">>", 
             style = discord.ButtonStyle.blurple,
             direction = 1
-            )
+        )
         self._prev_button = CustomButton(
             callback_func = self.change_button_dir, 
             label = "<<", 
             style = discord.ButtonStyle.blurple,
             direction = -1
-            )
+        )
         
         # Enable or disable buttons toggle when scrolling to end
         self.toggle_buttons()
@@ -79,3 +79,36 @@ class DecksButtonView(DirectionalButtonView):
             self.toggle_buttons()
 
             await self.edit_func(context, interaction, self)
+
+class FlashcardButtonView(DecksButtonView):
+    def __init__(self, embeds: list, edit_func, flip_func, context_i: int = 0, context_num: int = 1):
+        super().__init__(embeds, edit_func, context_i, context_num)
+        self.side = "front"
+        self.flip_func = flip_func
+
+        self._flip_button = CustomButton(
+            callback_func = self.flip_flashcard, 
+            label = "FLIP", 
+            style = discord.ButtonStyle.blurple
+        )
+
+        self.add_item(item = self._flip_button)
+
+    async def change_button_dir(self, interaction: discord.Interaction, direction: int):
+
+        self.side = "front"
+
+        await super().change_button_dir(interaction, direction)
+
+    async def flip_flashcard(self, interaction: discord.Interaction):
+
+        if (self.side == "front"):
+            self.side = "back"
+        else:
+            self.side = "front"
+
+        cur_flashcard = self.contexts[self.context_i]
+
+        await self.flip_func(cur_flashcard, interaction, self.side, self)
+
+        

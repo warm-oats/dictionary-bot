@@ -6,6 +6,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from model.deck_model import DeckModel
 from view.deck_view import DeckView
+from view.flashcard_view import FlashcardView
 from database.db import Db
 
 class DeckController(commands.Cog):
@@ -15,6 +16,7 @@ class DeckController(commands.Cog):
         self._bot = bot
         self._deck_model = DeckModel()
         self._deck_view = DeckView()
+        self._flashcard_view = FlashcardView()
         self._db = Db()
 
     @app_commands.command(name = "get-deck-list", description = "Get list of all decks")
@@ -45,7 +47,7 @@ class DeckController(commands.Cog):
             await ctx.followup.send(content = e)
 
     @app_commands.command(name = "study-deck", description = "Study a flashcard deck")
-    @app_commands.describe(deck_name = "Name of new deck")
+    @app_commands.describe(deck_name = "Name of deck to study")
     async def study_deck(self, ctx: discord.Interaction, deck_name: str):
         
         # Defer due to fetching definitions can take long
@@ -53,7 +55,9 @@ class DeckController(commands.Cog):
         
         try:
             user_id = ctx.user.id
-            flashcards = self._db.fetch_flashcards(user_id, deck_name)
+            flashcards_info = self._deck_model.get_vocabs(user_id, deck_name)
+
+            await self._flashcard_view.post_flashcards_info(flashcards_info, deck_name, ctx)
         except ValueError as e:
             await ctx.followup.send(content = e)
 

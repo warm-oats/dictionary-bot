@@ -16,7 +16,7 @@ class DeckModel:
         return self.db.get_deck_length(user_id, deck_name)
     
     def get_vocabs(self, user_id, deck_name):
-        return self.db.fetch_vocabs(user_id, deck_name)
+        return self.db.fetch_flashcards(user_id, deck_name)
 
 if __name__ == '__main__':
     deck = DeckModel()
