@@ -29,7 +29,7 @@ class Db:
                             FROM flashcards.flashcards
                             WHERE user_id = {user_id}
                             AND deck_name = '{deck_name}'
-                            AND front_page = '{flashcard}');
+                            AND flashcard_front = '{flashcard}');
                             """)
         
         if (not self.cursor.fetchone()[0]):
@@ -54,7 +54,7 @@ class Db:
                             FROM flashcards.flashcards
                             WHERE user_id = {user_id}
                             AND deck_name = '{deck_name}'
-                            AND front_page = '{flashcard}');
+                            AND flashcard_front = '{flashcard}');
                             """)
         
         if (self.cursor.fetchone()[0]):
@@ -118,15 +118,15 @@ class Db:
         except ValueError as e:
             return e
 
-    def add_flashcard(self, user_id: int, deck_name: str, flashcard: str, definition: str):
+    def add_flashcard(self, user_id: int, deck_name: str, flashcard_front: str, flashcard_back: str):
         
         try:
             self.deck_not_exist(user_id, deck_name)
-            self.flashcard_exist(user_id, deck_name, flashcard)
+            self.flashcard_exist(user_id, deck_name, flashcard_front)
 
             self.cursor.execute(f"""
-                                INSERT into flashcards.flashcards(user_id, deck_name, front_page, back_page) 
-                                VALUES({user_id}, '{deck_name}', '{flashcard}', '{definition}');
+                                INSERT into flashcards.flashcards(user_id, deck_name, flashcard_front, flashcard_back) 
+                                VALUES({user_id}, '{deck_name}', '{flashcard_front}', '{flashcard_back}');
                                 """)
             
             self.connection.commit()
@@ -142,7 +142,7 @@ class Db:
             self.cursor.execute(f"""
                                 DELETE FROM flashcards.flashcards 
                                 WHERE user_id = {user_id}
-                                AND front_page = '{flashcard}'
+                                AND flashcard_front = '{flashcard}'
                                 AND deck_name = '{deck_name}';
                                 """)
             
@@ -150,7 +150,7 @@ class Db:
         except ValueError as e:
             return e
         
-    def update_word(self, user_id: int, deck_name: str, flashcard: str, new_flashcard: str, new_definition: str):
+    def update_flashcard(self, user_id: int, deck_name: str, flashcard: str, new_flashcard_front: str, new_flashcard_back: str):
 
         try:
             self.deck_not_exist(user_id, deck_name)
@@ -158,10 +158,10 @@ class Db:
 
             self.cursor.execute(f"""
                                 UPDATE flashcards.flashcards
-                                SET front_page = '{new_flashcard}', back_page = '{new_definition}'
+                                SET flashcard_front = '{new_flashcard_front}', flashcard_back = '{new_flashcard_back}'
                                 WHERE deck_name = '{deck_name}'
                                 AND user_id = {user_id}
-                                AND front_page = '{flashcard}';
+                                AND flashcard_front = '{flashcard}';
                                 """)
         except ValueError as e:
             return e
@@ -172,7 +172,7 @@ class Db:
             self.deck_not_exist(user_id, deck_name)
 
             self.cursor.execute(f"""
-                                SELECT front_page, back_page
+                                SELECT flashcard_front, flashcard_back
                                 FROM flashcards.flashcards
                                 WHERE user_id = {user_id}
                                 AND deck_name = '{deck_name}';

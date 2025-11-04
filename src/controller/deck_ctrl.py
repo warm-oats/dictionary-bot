@@ -47,7 +47,7 @@ class DeckController(commands.Cog):
 
     @app_commands.command(name = "delete-deck", description = "Delete a deck")
     @app_commands.describe(deck_name = "Deck name to be deleted")
-    async def add_deck(self, ctx: discord.Interaction, deck_name: str):
+    async def delete_deck(self, ctx: discord.Interaction, deck_name: str):
         
         # Defer due to fetching definitions can take long
         await ctx.response.defer(ephemeral = True, thinking = True)
@@ -79,8 +79,8 @@ class DeckController(commands.Cog):
             ctx.followup.send(content = e)
 
     @app_commands.command(name = "add-flashcard", description = "Add new flashcard")
-    @app_commands.describe(deck_name = "Deck to add vocab to", vocab = "The vocabu")
-    async def update_deck(self, ctx: discord.Interaction, new_deck_name: str, deck_name: str):
+    @app_commands.describe(deck_name = "Deck to add flashcard to", flashcard_front = "Front description of flashcard", flashcard_back = "Back description of flashcard")
+    async def add_flashcard(self, ctx: discord.Interaction, deck_name: str, flashcard_front: str, flashcard_back: str):
 
         # Defer due to fetching definitions can take long
         await ctx.response.defer(ephemeral = True, thinking = True)
@@ -88,9 +88,9 @@ class DeckController(commands.Cog):
         try:
             user_id = ctx.user.id
 
-            self._db.update_deck_name(user_id, deck_name, new_deck_name)
+            self._db.add_flashcard(user_id, flashcard_front, flashcard_back)
 
-            ctx.followup.send(content = f"Changed deck '{deck_name}' to '{new_deck_name}'")
+            ctx.followup.send(content = f"Added flashcard '{flashcard_front}' to deck '{deck_name}'")
         except ValueError as e:
             ctx.followup.send(content = e)
 
