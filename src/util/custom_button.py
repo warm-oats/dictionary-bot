@@ -3,7 +3,7 @@ import discord
 class CustomButton(discord.ui.Button):
 
     def __init__(self, callback_func, style: discord.ButtonStyle, label: str, **callback_params):
-        super().__init__(label = label, style = style)
+        super().__init__(label = label, style = style, disabled = False)
         self.callback_func = callback_func
         self.callback_params = callback_params
 

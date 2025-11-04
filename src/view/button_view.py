@@ -25,6 +25,9 @@ class DirectionalButtonView(discord.ui.View):
             style = discord.ButtonStyle.blurple,
             direction = -1
             )
+        
+        # Enable or disable buttons toggle when scrolling to end
+        self.toggle_buttons()
 
         self.add_item(item = self._prev_button)
         self.add_item(item = self._forward_button)
@@ -37,12 +40,24 @@ class DirectionalButtonView(discord.ui.View):
             context = self.pos_contexts[self.context_i + direction]
             self.context_num += direction
 
-            await self.edit_func(context, self.context_num, contexts_len, interaction)
-
             self.context_i += direction
+            self.toggle_buttons()
+
+            await self.edit_func(context, self.context_num, contexts_len, interaction, self)
 
     def is_valid_index(self, index: int, lst_len: int):
         if index < 0 or index >= lst_len:
             return False
         
         return True
+    
+    def toggle_buttons(self):
+        if (self.context_i == len(self.pos_contexts) - 1):
+            self._forward_button.disabled = True
+        else:
+            self._forward_button.disabled = False
+        
+        if (self.context_i == 0):
+            self._prev_button.disabled = True
+        else:
+            self._prev_button.disabled = False
