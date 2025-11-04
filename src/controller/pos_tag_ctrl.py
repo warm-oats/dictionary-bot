@@ -15,7 +15,7 @@ class PosTagController(commands.Cog):
         self._pos_tag_view = PosTagView()
     
     @app_commands.command(name = 'extract-pos', description = 'Extract Korean sentence parts of speech in context')
-    @app_commands.describe(sentence = "Korean sentence", colorize = "Colorize all parts of speech?")
+    @app_commands.describe(sentence = "Korean sentence(s)", colorize = "Colorize all parts of speech")
     async def extract_pos(self, ctx: discord.Interaction, *, sentence: str, colorize: bool = False):
 
         # Defer due to fetching translations can take long

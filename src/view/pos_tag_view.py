@@ -45,8 +45,9 @@ class PosTagView:
                 for word_map in words_map:
                     formatted_words += self.word_formatter(word_map)
 
-                if (put_pos_title): # If creating a single embed for all pos, attach all pos names, else not
-                    embed.add_field(name = f"**{pos.capitalize()}**", value = formatted_words, inline = False)
+                # If creating a single embed for all pos, attach all pos names, else not
+                if (put_pos_title):
+                    embed.add_field(name = f"**{pos}**", value = formatted_words, inline = False)
                 else:
                     embed.add_field(name = "", value = formatted_words, inline = False)
 
