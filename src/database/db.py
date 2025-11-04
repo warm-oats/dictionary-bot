@@ -73,7 +73,7 @@ class Db:
 
             self.connection.commit()  
         except ValueError as e:
-            print(e)
+            return e
         
     def delete_deck(self, user_id, deck_name):
 
@@ -94,7 +94,7 @@ class Db:
         
             self.connection.commit()
         except ValueError as e:
-            print(e)
+            return e
 
     def update_deck_name(self, user_id, deck_name, new_deck_name):
         
@@ -117,7 +117,7 @@ class Db:
             
             self.connection.commit()
         except ValueError as e:
-            print(e)
+            return e
 
     def add_vocab(self, user_id, vocab, definition, deck_name):
         
@@ -132,7 +132,7 @@ class Db:
             
             self.connection.commit()
         except ValueError as e:
-            print(e)
+            return e
         
     def delete_vocab(self, user_id, vocab, deck_name):
 
@@ -149,7 +149,7 @@ class Db:
             
             self.connection.commit()
         except ValueError as e:
-            print(e)
+            return e
         
     def update_word(self, user_id, deck_name, vocab, new_vocab, new_definition):
 
@@ -165,7 +165,7 @@ class Db:
                                 AND front_page = '{vocab}';
                                 """)
         except ValueError as e:
-            print(e)
+            return e
 
     def fetch_vocab(self):
         
@@ -182,24 +182,3 @@ class Db:
         record = self.cursor.fetchall()
 
         print("Data from Flashcards:- ", record)
-
-if __name__ == "__main__":
-    db = Db()
-
-    db.create_deck(123456, "Korean Stuff")
-    db.fetch_vocab()
-    db.update_deck_name(123456, "Korean feafew", "Korean Stuff")
-    print('---------------------')
-    db.fetch_vocab()
-    db.add_vocab(123456, "what", "Means hello", "Korean Stuff")
-    print('---------------------')
-    db.fetch_vocab()
-    db.delete_vocab(123456, "whattttttttt", "Korean Stuff")
-    print('---------------------')
-    db.fetch_vocab()
-    db.update_word(123456, "Korean Stuff", "what", "hey", "Means bruuhhh")
-    db.fetch_vocab()
-    print('-------------------------')
-    db.delete_deck(123456, "Korean Stuff")
-    print('---------------------')
-    db.fetch_vocab()
