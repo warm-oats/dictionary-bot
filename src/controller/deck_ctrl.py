@@ -115,7 +115,7 @@ class DeckController(commands.Cog):
                            deck_name = "Deck name storing this flashcard", 
                            flashcard_front = "New flashcard front side",
                            flashcard_back = "New flashcard back side")
-    async def update_flashcard(self, ctx: discord.Interaction, flashcard_name: str, deck_name: str, flashcard_front: str, flashcard_back: str = None):
+    async def update_flashcard(self, ctx: discord.Interaction, flashcard_name: str, deck_name: str, flashcard_front: str = None, flashcard_back: str = None):
 
         # Defer due to fetching definitions can take long
         await ctx.response.defer(ephemeral = True, thinking = True)
@@ -123,9 +123,15 @@ class DeckController(commands.Cog):
         try:
             user_id = ctx.user.id
 
-            self._db.delete_flashcard(user_id, flashcard_name)
+            if (not flashcard_front):
+                flashcard_front = flashcard_name
 
-            ctx.followup.send(content = f"Deleted flashcard '{flashcard_name}' from deck '{deck_name}'")
+            if (not flashcard_back):
+                flashcard_back = self._db.fetch_flashcard_back(user_id, deck_name, flashcard_front)
+
+            self._db.update_flashcard(user_id, deck_name, flashcard_name, flashcard_front, flashcard_back)
+
+            ctx.followup.send(content = f"Updated flashcard '{flashcard_name}' to {flashcard_front}: {flashcard_back} from deck '{deck_name}'")
         except ValueError as e:
             ctx.followup.send(content = e)
 

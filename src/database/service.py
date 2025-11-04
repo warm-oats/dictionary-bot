@@ -133,7 +133,7 @@ class Db:
         except ValueError as e:
             return e
         
-    def get_flashcard_back(self, user_id: int, deck_name: str, flashcard_front: str):
+    def fetch_flashcard_back(self, user_id: int, deck_name: str, flashcard_front: str):
         
         try:
             self.flashcard_not_exist(user_id, deck_name, flashcard_front)
