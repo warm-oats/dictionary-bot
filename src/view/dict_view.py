@@ -3,7 +3,6 @@ import discord
 class DictView:
 
     def __init__(self):
-        super().__init__()
         self.phonetics = []
 
     async def post_word_info(self, ctx: discord.Interaction, pos_contexts: list[dict], button_view):
@@ -30,7 +29,7 @@ class DictView:
         # Add field for pronunciation
         embed.add_field(name = "Pronunciations", value = ' '.join(self.phonetics), inline = False)
 
-        # Add fields for each definition
+        # Add field for each definition
         for count, definition in enumerate(word_info["definitions"], start = 1):
             embed.add_field(name = f"Definition {count}", value = definition.capitalize(), inline = False)
 

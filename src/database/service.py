@@ -10,7 +10,7 @@ class Db:
     connection = psycopg2.connect(**ast.literal_eval(os.getenv("DB_CONNECT")))
     cursor = connection.cursor()
 
-    def deck_not_exist(self, user_id, deck_name) -> bool:
+    def deck_not_exist(self, user_id: int, deck_name: str) -> bool:
         self.cursor.execute(f"""
                             SELECT EXISTS(
                             SELECT 1
@@ -22,7 +22,7 @@ class Db:
         if (not self.cursor.fetchone()[0]):
             raise ValueError(f"Deck '{deck_name}' does not exist")
         
-    def vocab_not_exist(self, user_id, deck_name, vocab):
+    def vocab_not_exist(self, user_id: int, deck_name: str, vocab: str):
         self.cursor.execute(f"""
                             SELECT EXISTS(
                             SELECT 1
@@ -35,7 +35,7 @@ class Db:
         if (not self.cursor.fetchone()[0]):
             raise ValueError(f"Vocab '{vocab}' does not exist")
 
-    def deck_exist(self, user_id, deck_name) -> bool:
+    def deck_exist(self, user_id: int, deck_name: str) -> bool:
         self.cursor.execute(f"""
                             SELECT EXISTS(
                             SELECT 1
@@ -47,7 +47,7 @@ class Db:
         if (self.cursor.fetchone()[0]):
             raise ValueError(f"Deck '{deck_name}' already exist")
         
-    def vocab_exist(self, user_id, deck_name, vocab):
+    def vocab_exist(self, user_id: int, deck_name: str, vocab: str):
         self.cursor.execute(f"""
                             SELECT EXISTS(
                             SELECT 1
@@ -74,7 +74,7 @@ class Db:
         except ValueError as e:
             return e
         
-    def delete_deck(self, user_id, deck_name):
+    def delete_deck(self, user_id: int, deck_name: str):
 
         try:
             self.deck_not_exist(user_id, deck_name)
@@ -95,7 +95,7 @@ class Db:
         except ValueError as e:
             return e
 
-    def update_deck_name(self, user_id, deck_name, new_deck_name):
+    def update_deck_name(self, user_id: int, deck_name: str, new_deck_name: str):
         
         try:
             self.deck_not_exist(user_id, deck_name)
@@ -118,7 +118,7 @@ class Db:
         except ValueError as e:
             return e
 
-    def add_vocab(self, user_id, vocab, definition, deck_name):
+    def add_vocab(self, user_id: int, deck_name: str, vocab: str, definition: str):
         
         try:
             self.deck_not_exist(user_id, deck_name)
@@ -133,7 +133,7 @@ class Db:
         except ValueError as e:
             return e
         
-    def delete_vocab(self, user_id, vocab, deck_name):
+    def delete_vocab(self, user_id: int, deck_name: str, vocab: str):
 
         try:
             self.deck_not_exist(user_id, deck_name)
@@ -150,7 +150,7 @@ class Db:
         except ValueError as e:
             return e
         
-    def update_word(self, user_id, deck_name, vocab, new_vocab, new_definition):
+    def update_word(self, user_id: int, deck_name: str, vocab: str, new_vocab: str, new_definition: str):
 
         try:
             self.deck_not_exist(user_id, deck_name)
@@ -166,7 +166,7 @@ class Db:
         except ValueError as e:
             return e
 
-    def fetch_vocabs(self, user_id, deck_name):
+    def fetch_vocabs(self, user_id: int, deck_name: str):
         
         try:
             self.deck_not_exist(user_id, deck_name)
@@ -184,7 +184,7 @@ class Db:
         except ValueError as e:
             return e
 
-    def fetch_decks(self, user_id):
+    def fetch_decks(self, user_id: int):
         
         self.cursor.execute(f"""
                             SELECT deck_name
@@ -196,7 +196,7 @@ class Db:
 
         return all_decks
     
-    def get_deck_length(self, user_id, deck_name):
+    def get_deck_length(self, user_id: int, deck_name: str):
 
         try:
             self.deck_not_exist(user_id, deck_name)

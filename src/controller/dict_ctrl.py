@@ -7,7 +7,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from model.dict_model import DictModel
 from view.dict_view import DictView
 from view.button_view import DirectionalButtonView
-from main import bot
 
 class DictController(commands.Cog):
 

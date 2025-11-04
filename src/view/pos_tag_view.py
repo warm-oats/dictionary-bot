@@ -1,13 +1,8 @@
 import discord
-from pathlib import Path
-import sys
-import asyncio
-sys.path.insert(0, str(Path(__file__).parent.parent))   
 
 class PosTagView:
 
     async def post_tag_info(self, ctx: discord.Interaction, translation_package: dict, no_stem_words: dict[str, list], colorize: bool):
-        
         embeds = []
         sentence = translation_package["text"]
         sentence_translation = translation_package["translation"]

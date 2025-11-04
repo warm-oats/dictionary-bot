@@ -6,9 +6,9 @@ from util.custom_button import CustomButton
 
 class DirectionalButtonView(discord.ui.View):
 
-    def __init__(self, pos_contexts: list[dict], edit_func, context_i: int = 0, context_num: int = 1):
+    def __init__(self, contexts: list, edit_func, context_i: int = 0, context_num: int = 1):
         super().__init__()
-        self.pos_contexts = pos_contexts
+        self.contexts = contexts
         self.edit_func = edit_func
         self.context_i = context_i
         self.context_num = context_num
@@ -34,10 +34,10 @@ class DirectionalButtonView(discord.ui.View):
 
     async def change_button_dir(self, interaction: discord.Interaction, direction: int):
 
-        contexts_len = len(self.pos_contexts)
+        contexts_len = len(self.contexts)
 
         if self.is_valid_index(self.context_i + direction, contexts_len):
-            context = self.pos_contexts[self.context_i + direction]
+            context = self.contexts[self.context_i + direction]
             self.context_num += direction
 
             self.context_i += direction
@@ -52,7 +52,7 @@ class DirectionalButtonView(discord.ui.View):
         return True
     
     def toggle_buttons(self):
-        if (self.context_i == len(self.pos_contexts) - 1):
+        if (self.context_i == len(self.contexts) - 1):
             self._forward_button.disabled = True
         else:
             self._forward_button.disabled = False
@@ -61,3 +61,21 @@ class DirectionalButtonView(discord.ui.View):
             self._prev_button.disabled = True
         else:
             self._prev_button.disabled = False
+
+class DecksButtonView(DirectionalButtonView):
+
+    def __init__(self, embeds: list, edit_func, context_i: int = 0, context_num: int = 1):
+        super().__init__(embeds, edit_func, context_i, context_num)
+
+    async def change_button_dir(self, interaction: discord.Interaction, direction: int):
+        
+        contexts_len = len(self.contexts)
+
+        if self.is_valid_index(self.context_i + direction, contexts_len):
+            context = self.contexts[self.context_i + direction]
+            self.context_num += direction
+
+            self.context_i += direction
+            self.toggle_buttons()
+
+            await self.edit_func(context, interaction, self)
