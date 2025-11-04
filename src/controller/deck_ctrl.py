@@ -78,6 +78,22 @@ class DeckController(commands.Cog):
         except ValueError as e:
             ctx.followup.send(content = e)
 
+    @app_commands.command(name = "add-flashcard", description = "Add new flashcard")
+    @app_commands.describe(deck_name = "Deck to add vocab to", vocab = "The vocabu")
+    async def update_deck(self, ctx: discord.Interaction, new_deck_name: str, deck_name: str):
+
+        # Defer due to fetching definitions can take long
+        await ctx.response.defer(ephemeral = True, thinking = True)
+
+        try:
+            user_id = ctx.user.id
+
+            self._db.update_deck_name(user_id, deck_name, new_deck_name)
+
+            ctx.followup.send(content = f"Changed deck '{deck_name}' to '{new_deck_name}'")
+        except ValueError as e:
+            ctx.followup.send(content = e)
+
 async def setup(bot: commands.Bot):
     print("Inside deck controller setup function")
     await bot.add_cog(DeckController(bot))
