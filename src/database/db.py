@@ -72,7 +72,7 @@ class Db:
 
             self.connection.commit()  
         except ValueError as e:
-            return e
+            raise ValueError(e)
         
     def delete_deck(self, user_id: int, deck_name: str):
 
@@ -93,7 +93,7 @@ class Db:
         
             self.connection.commit()
         except ValueError as e:
-            return e
+            raise ValueError(e)
 
     def update_deck_name(self, user_id: int, deck_name: str, new_deck_name: str):
         
@@ -116,7 +116,7 @@ class Db:
             
             self.connection.commit()
         except ValueError as e:
-            return e
+            raise ValueError(e)
 
     def add_flashcard(self, user_id: int, deck_name: str, flashcard_front: str, flashcard_back: str):
         
@@ -131,7 +131,7 @@ class Db:
             
             self.connection.commit()
         except ValueError as e:
-            return e
+            raise ValueError(e)
         
     def fetch_flashcard_back(self, user_id: int, deck_name: str, flashcard_front: str):
         
@@ -150,7 +150,7 @@ class Db:
 
             return flashcard_back
         except ValueError as e:
-            return e
+            raise ValueError(e)
         
     def delete_flashcard(self, user_id: int, deck_name: str, flashcard: str):
 
@@ -167,7 +167,7 @@ class Db:
             
             self.connection.commit()
         except ValueError as e:
-            return e
+            raise ValueError(e)
         
     def update_flashcard(self, user_id: int, deck_name: str, flashcard: str, new_flashcard_front: str, new_flashcard_back: str):
 
@@ -183,7 +183,7 @@ class Db:
                                 AND flashcard_front = '{flashcard}';
                                 """)
         except ValueError as e:
-            return e
+            raise ValueError(e)
 
     def fetch_flashcards(self, user_id: int, deck_name: str):
         
@@ -201,7 +201,7 @@ class Db:
 
             return flashcards
         except ValueError as e:
-            return e
+            raise ValueError(e)
 
     def fetch_decks(self, user_id: int):
         
@@ -231,4 +231,12 @@ class Db:
 
             return deck_len
         except ValueError as e:
-            return e
+            raise ValueError(e)
+        
+if __name__ == '__main__':
+    db = Db()
+
+    try:
+        db.create_deck(313393208744869892, "Korean")
+    except Exception as e:
+        print(e)

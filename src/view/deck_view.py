@@ -5,14 +5,23 @@ class DeckView:
     async def post_decks_info(self, decks_info: list[list[str, int]], user_name: str, ctx: discord.Interaction):
         # List containing an embed for each deck context
         embeds = []
-        button_view = DecksButtonView(embeds, self.edit_deck_info)
+
+        if (not decks_info):
+            await ctx.followup.send(f"No decks for user {user_name}")
+            return
 
         start_i = 0
+        end_i = min(5, len(decks_info))
+        copy_deck = decks_info[start_i:end_i]
 
         # Each deck embed should only contain 5 decks at most
-        for end_i in range(5, len(decks_info), 5):
+        while (copy_deck):
             embeds.append(self.create_decks_embed(decks_info[start_i:end_i], user_name))
             start_i = end_i
+            end_i = start_i + 5
+            copy_deck = decks_info[start_i:end_i]
+        
+        button_view = DecksButtonView(embeds, self.edit_deck_info)
 
         await ctx.followup.send(embed = embeds[0], view = button_view)
         await button_view.wait()
@@ -25,7 +34,7 @@ class DeckView:
         embed = discord.Embed(title = f"Decks for {user_name}")
 
         # Add field for each deck
-        for deck_name, vocab_count in enumerate(decks_info, start = 1):
+        for deck_name, vocab_count in decks_info:
             embed.add_field(name = f"{deck_name} - {vocab_count} vocabularies", value = '', inline = False)
 
         return embed

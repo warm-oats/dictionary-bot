@@ -68,7 +68,7 @@ class DecksButtonView(DirectionalButtonView):
         super().__init__(embeds, edit_func, context_i, context_num)
 
     async def change_button_dir(self, interaction: discord.Interaction, direction: int):
-        
+
         contexts_len = len(self.contexts)
 
         if self.is_valid_index(self.context_i + direction, contexts_len):
