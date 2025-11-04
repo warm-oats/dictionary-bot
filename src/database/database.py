@@ -82,19 +82,19 @@ class DataBase:
         except ValueError as e:
             print(e)
 
-    def add_word(self, user_id, word, definition, deck_name):
+    def add_vocab(self, user_id, vocab, definition, deck_name):
         
         try:
             self.deck_exists(user_id, deck_name)
 
             self.cursor.execute(f"""
                                 INSERT into flashcards.flashcards(user_id, deck_name, front_page, back_page) 
-                                VALUES({user_id}, '{deck_name}', '{word}', '{definition}');
+                                VALUES({user_id}, '{deck_name}', '{vocab}', '{definition}');
                                 """)
         except ValueError as e:
             print(e)
         
-    def delete_word(self, user_id, word, deck_name):
+    def delete_vocab(self, user_id, vocab, deck_name):
 
         try:
             self.deck_exists(user_id, deck_name)
@@ -102,7 +102,7 @@ class DataBase:
             self.cursor.execute(f"""
                                 DELETE FROM flashcards.flashcards 
                                 WHERE user_id = {user_id}
-                                AND front_page = '{word}'
+                                AND front_page = '{vocab}'
                                 AND deck_name = '{deck_name}';
                                 """)
         except ValueError as e:
@@ -111,7 +111,7 @@ class DataBase:
     def update_word(self, user_id, new_word, new_definition, deck_name):
         pass
 
-    def fetch_word(self):
+    def fetch_vocab(self):
         
         self.cursor.execute("select * from flashcards.user_decks;")
 
