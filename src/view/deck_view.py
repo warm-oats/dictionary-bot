@@ -9,6 +9,7 @@ class DeckView:
 
         start_i = 0
 
+        # Each deck embed should only contain 5 decks at most
         for end_i in range(5, len(decks_info), 5):
             embeds.append(self.create_decks_embed(decks_info[start_i:end_i], user_name))
             start_i = end_i
