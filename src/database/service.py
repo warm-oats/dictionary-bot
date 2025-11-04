@@ -133,6 +133,25 @@ class Db:
         except ValueError as e:
             return e
         
+    def get_flashcard_back(self, user_id: int, deck_name: str, flashcard_front: str):
+        
+        try:
+            self.flashcard_not_exist(user_id, deck_name, flashcard_front)
+
+            self.cursor.execute(f"""
+                                SELECT flashcard_back 
+                                FROM flashcards.flashcards
+                                WHERE user_id = {user_id}
+                                AND deck_name = '{deck_name}'
+                                AND flashcard_front = '{flashcard_front}';
+                                """)
+            
+            flashcard_back = self.cursor.fetchone()[0]
+
+            return flashcard_back
+        except ValueError as e:
+            return e
+        
     def delete_flashcard(self, user_id: int, deck_name: str, flashcard: str):
 
         try:
