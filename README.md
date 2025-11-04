@@ -1,7 +1,7 @@
 # K-Learn: Discord Korean Language Learning Bot
 
-<img src="https://cdn.discordapp.com/app-icons/1427409639439466547/b402c55cee00ec726d3a12433b7cee0b.png?size=512&quot" width="64" align="left"></img>
-K-Learn is a Korean language learning bot that helps you learn Korean more efficiently. It combines different language learning tools into one to make your life easier. It can translate Korean sentences, highlighting and extracting parts of speech from it. It even has a robust flashcard system to save your vocabularies! K-Learn uses tools such as ChatGPT, KoNLPy NLP library, and the Merriam-Webster dictionary to combine all these tools together all into one Discord bot. 
+<img src="https://github.com/warm-oats/dictionary-bot/blob/main/src/assets/k_learn_pfp.png" width="64" align="left"></img>
+K-Learn is a Korean language learning bot that helps you learn Korean more efficiently. It combines different language learning tools into one to make your life easier. It can translate Korean sentences, highlighting and extracting parts of speech from them. It even features a robust flashcard system to help you save your vocabulary! K-Learn utilizes tools such as ChatGPT, KoNLPy NLP library, and the Merriam-Webster dictionary.
 
 ## Invite K-Learn
 
@@ -17,9 +17,9 @@ Defines English words using the Merriam-Webster dictionary API.
 | --- | --- |
 |`define <word>`|Define an English word|
 
-### Korean Parts of Speech Extractrion and Translation
+### Korean Parts of Speech Extraction and Translation
 
-Given a Korean word, phrase, or sentence, extracts all parts of speech from it, translating it to English, and optionally color-code highlight all verbs, nouns, and adjectives in that Korean word, phrase, or sentence.
+Given a Korean word, phrase, or sentence, extracts all parts of speech from it, translating it to English, and optionally color-codes all verbs, nouns, and adjectives in that Korean word, phrase, or sentence.
 
 | Command | Description |
 | --- | --- |
@@ -27,7 +27,7 @@ Given a Korean word, phrase, or sentence, extracts all parts of speech from it, 
 
 ### Flashcard System
 
-A robust flashcard system as a studying tool to save and manage vocabularies. A flashcard is a double-sided: front and back. Users can create decks and flashcards, and modify them with full CRUD functionality. 
+A robust flashcard system as a studying tool to save and manage vocabulary. A flashcard is double-sided: front and back. Users can create decks and flashcards, and modify them with full CRUD functionality. 
 
 | Commands | Description |
 | --- | --- |
