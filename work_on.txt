@@ -1,4 +1,0 @@
-- TTS feature
-- Flashcard feature
-- Requests and button input validation
-- Request limiter
