@@ -12,6 +12,3 @@ class DictApiManager:
         response = requests.get(f"https://dictionaryapi.com/api/v3/references/collegiate/json/{word}?key={DictApiManager.API_KEY}")
 
         return response.json()
-    
-if __name__ == '__main__':
-    print(DictApiManager().request_json('what'))

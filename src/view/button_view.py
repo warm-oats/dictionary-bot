@@ -110,5 +110,3 @@ class FlashcardButtonView(DecksButtonView):
         cur_flashcard = self.contexts[self.context_i]
 
         await self.flip_func(cur_flashcard, interaction, self.side, self)
-
-        

@@ -76,22 +76,3 @@ class GroqModel:
         self.prompt.append(bot_msg_dict)
 
         return bot_msg_dict
-    
-if __name__ == "__main__":
-    translator = GroqModel("Korean")
-    nouns = ['곶감', '뭐', '게']
-    verbs = ['크다']
-    adjectives = ['무섭다', '분명하다']
-
-    user_msg = f"""
-    sentence: 곶감이 뭐지? 크고 무서운 게 분명해.’
-    nouns: {nouns}
-    verbs: {verbs}
-    adjectives: {adjectives}
-    """
-
-    translator = GroqModel("Korean")
-
-    response = translator.send_message(user_msg)
-
-    print(response)

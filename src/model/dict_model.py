@@ -34,8 +34,3 @@ class DictModel:
     
     def is_valid_word(self, word_info: dict[str, str], word_name: str):
         return word_info["word_name"] == word_name
-    
-if __name__ == '__main__':
-    dict_model = DictModel()
-
-    dict_model.get_word_info('what')

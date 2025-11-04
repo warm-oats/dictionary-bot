@@ -11,13 +11,3 @@ class TranslatorModel:
                 return await translator.translate(word, src = src, dest = dest)
 
         return asyncio.run(sync_translate())
-    
-if __name__ == '__main__':
-    translator = TranslatorModel()
-
-    print(translator.translate_word("가").text)
-
-    print(translator.translate_word("가").text)
-
-    
-
